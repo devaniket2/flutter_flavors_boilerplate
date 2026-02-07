@@ -1,0 +1,39 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        // debug
+        {
+            "name": "BoilerPlate App QA",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "program": "lib/main_qa.dart",
+            "args": ["--flavor", "qa"]
+        },
+        {
+            "name": "BoilerPlate App PROD",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "program": "lib/main_prod.dart",
+            "args": ["--flavor", "prod"]
+        },
+        // release
+        {
+            "name": "BoilerPlate App QA (Release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/main_qa.dart",
+            "args": ["--flavor", "qa"]
+        },
+        {
+            "name": "BoilerPlate App PROD (Release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/main_prod.dart",
+            "args": ["--flavor", "prod"]
+        },
+    ]
+}
