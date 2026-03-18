@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PrimaryAppBar extends StatelessWidget implements PreferredSize {

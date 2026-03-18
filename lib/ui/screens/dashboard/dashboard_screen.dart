@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_state.getx.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/pages/about/about_screen.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/pages/home/home_screen.dart';
+import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview.dart';
 import 'package:get/state_manager.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -38,8 +38,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (val) => _changePage(val),
-        children: [const HomeScreen(), AboutScreen()],
+        // children: [const HomeScreen(), AboutScreen()],
+        children: [const HomeScreen(), const AppWebview()],
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(

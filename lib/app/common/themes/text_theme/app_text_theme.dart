@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 sealed class AppTextTheme {
   static const TextStyle _defaultTextTheme = TextStyle(
-    fontSize: 18,
+    fontSize: 12,
     decorationStyle: TextDecorationStyle.dotted,
     fontStyle: FontStyle.italic,
   );

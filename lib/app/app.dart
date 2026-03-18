@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/theme_manager.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/string_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +31,7 @@ class _FlavorBoilerplateAppState extends State<FlavorBoilerplateApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
+      designSize: const Size(411, 823), // Pixel 2 XL size reference
       minTextAdapt: true,
       splitScreenMode: false,
       builder: (context, child) {
@@ -39,7 +40,7 @@ class _FlavorBoilerplateAppState extends State<FlavorBoilerplateApp> {
           () => MaterialApp(
             navigatorKey: GlobalContextKey.navigatorKey,
             debugShowCheckedModeBanner: false,
-            title: '',
+            title: StringResource.APP_TITLE,
             theme: themeManger.theme,
             onGenerateRoute: AppNavigator.getRoutes,
             initialRoute: Screens.SPLASH_SCREEN,

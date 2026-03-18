@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 
-final TextStyle _poppins = TextStyle(fontFamily: 'Poppins');
+final TextStyle _poppins = TextStyle(fontFamily: 'Lato');
 
 final ThemeData APP_LIGHT_THEME = ThemeData(
-  appBarTheme: const AppBarTheme(foregroundColor: ColorResource.PRIMARY_BLUE),
+  appBarTheme: const AppBarTheme(foregroundColor: ColorResource.PRIMARY_COLOR),
   useMaterial3: true,
-  primaryColor: ColorResource.PRIMARY_BLUE,
+  primaryColor: ColorResource.PRIMARY_COLOR,
   canvasColor: const Color(0xffffffee),
   // scaffold background color
   scaffoldBackgroundColor: const Color(0xFFF5F5F5),
@@ -41,17 +41,17 @@ final ThemeData APP_LIGHT_THEME = ThemeData(
     ),
     displayLarge: _poppins.copyWith(
       fontSize: 32.0,
-      color: ColorResource.PRIMARY_BLUE,
+      color: ColorResource.PRIMARY_COLOR,
       fontWeight: FontWeight.bold,
     ),
     displayMedium: _poppins.copyWith(
       fontSize: 30.0,
-      color: ColorResource.PRIMARY_BLUE,
+      color: ColorResource.PRIMARY_COLOR,
       fontWeight: FontWeight.bold,
     ),
     displaySmall: _poppins.copyWith(
       fontSize: 28.0,
-      color: ColorResource.PRIMARY_BLUE,
+      color: ColorResource.PRIMARY_COLOR,
       fontWeight: FontWeight.bold,
     ),
     labelLarge: _poppins.copyWith(fontSize: 16.0, color: Colors.grey),
@@ -62,10 +62,10 @@ final ThemeData APP_LIGHT_THEME = ThemeData(
   // // color scheme
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    primary: ColorResource.PRIMARY_BLUE,
+    primary: ColorResource.PRIMARY_COLOR,
     onPrimary: ColorResource.SEMI_WHITE,
-    secondary: ColorResource.PRIMARY_BLUE,
-    onSecondary: ColorResource.WHITE,
+    secondary: ColorResource.PRIMARY_COLOR,
+    onSecondary: Colors.white,
     error: Colors.redAccent,
     onError: Colors.white,
     surface: Color(0xffffffee),
@@ -80,7 +80,7 @@ final ThemeData APP_LIGHT_THEME = ThemeData(
   ),
 
   // icon theme
-  iconTheme: const IconThemeData(size: 24, color: ColorResource.PRIMARY_BLUE),
+  iconTheme: const IconThemeData(size: 24, color: ColorResource.PRIMARY_COLOR),
 
   // // bottom sheet
   bottomSheetTheme: BottomSheetThemeData(
@@ -91,4 +91,6 @@ final ThemeData APP_LIGHT_THEME = ThemeData(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
   ),
+
+  buttonTheme: ButtonThemeData(),
 );

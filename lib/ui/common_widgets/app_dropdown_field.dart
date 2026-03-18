@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppPrimaryDropDownField<T> extends StatefulWidget {
@@ -69,7 +69,7 @@ class _AppPrimaryDropDownFieldState extends State<AppPrimaryDropDownField> {
             labelStyle: TextStyle(
               color: widget.value == null
                   ? Colors.grey.shade800
-                  : ColorResource.PRIMARY_BLUE,
+                  : ColorResource.PRIMARY_COLOR,
             ),
             prefixIcon: widget.prefix,
             suffix: widget.suffix,
@@ -87,7 +87,7 @@ class _AppPrimaryDropDownFieldState extends State<AppPrimaryDropDownField> {
               borderSide: BorderSide(
                 color: widget.value == null
                     ? const Color(0xFFBCBCBC)
-                    : ColorResource.PRIMARY_BLUE,
+                    : ColorResource.PRIMARY_COLOR,
                 width: 1.sp,
               ),
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
@@ -110,7 +110,7 @@ class _AppPrimaryDropDownFieldState extends State<AppPrimaryDropDownField> {
               borderSide: BorderSide(
                 color: widget.value == null
                     ? const Color(0xFFBCBCBC)
-                    : ColorResource.PRIMARY_BLUE,
+                    : ColorResource.PRIMARY_COLOR,
                 width: 1.sp,
               ),
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),

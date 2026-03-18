@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppAutoCompleteField<T extends Object> extends StatelessWidget {
@@ -65,7 +65,7 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                           borderSide: BorderSide(
                             color: textEditingController.text.isEmpty
                                 ? const Color(0xFFBCBCBC)
-                                : ColorResource.PRIMARY_BLUE,
+                                : ColorResource.PRIMARY_COLOR,
                             width: 1.sp,
                           ),
                           borderRadius: BorderRadius.circular(
@@ -100,7 +100,7 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                           borderSide: BorderSide(
                             color: textEditingController.text.isEmpty
                                 ? const Color(0xFFBCBCBC)
-                                : ColorResource.PRIMARY_BLUE,
+                                : ColorResource.PRIMARY_COLOR,
                             width: 1.sp,
                           ),
                           borderRadius: BorderRadius.circular(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 
-final TextStyle _poppins = TextStyle(fontFamily: 'Poppins');
+final TextStyle _poppins = TextStyle(fontFamily: 'Lato');
 
 final ThemeData APP_DARK_THEME = ThemeData(
-  appBarTheme: const AppBarTheme(foregroundColor: ColorResource.PRIMARY_BLUE),
+  appBarTheme: const AppBarTheme(foregroundColor: ColorResource.PRIMARY_COLOR),
   useMaterial3: true,
-  primaryColor: ColorResource.PRIMARY_BLUE,
+  primaryColor: ColorResource.PRIMARY_COLOR,
   canvasColor: ColorResource.SEMI_BLACK,
   // scaffold background color
   scaffoldBackgroundColor: ColorResource.SEMI_BLACK_BG,
@@ -62,7 +62,7 @@ final ThemeData APP_DARK_THEME = ThemeData(
   // // color scheme
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
-    primary: ColorResource.PRIMARY_BLUE,
+    primary: ColorResource.PRIMARY_COLOR,
     onPrimary: ColorResource.SEMI_WHITE,
     secondary: ColorResource.SEMI_BLACK,
     onSecondary: ColorResource.WHITE,
@@ -80,7 +80,7 @@ final ThemeData APP_DARK_THEME = ThemeData(
   ),
 
   // icon theme
-  iconTheme: const IconThemeData(size: 24, color: ColorResource.PRIMARY_BLUE),
+  iconTheme: const IconThemeData(size: 24, color: ColorResource.PRIMARY_COLOR),
 
   // bottom sheet
   bottomSheetTheme: BottomSheetThemeData(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flavors_boilerplate/app/common/extensions/widget_extensions.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,9 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: PrimaryAppBar(title: 'Dynamic Widget Test'),
       body: SizedBox(
         width: 1.sw,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Column(
               children: [
                 SizedBox(height: 12.h),
@@ -163,6 +167,22 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 6.h),
 
           // button
+          AppButton(
+            onTap: () async {
+              await Future.delayed(const Duration(seconds: 2));
+              print('done waiting');
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(FontAwesomeIcons.person),
+                SizedBoxExtension.width(6.w),
+                Text('Get Access'),
+              ],
+            ),
+
+            // borderColor: Colors.white,
+          ),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_colors.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppInputField extends StatelessWidget {
@@ -84,7 +84,7 @@ class AppInputField extends StatelessWidget {
           labelStyle: TextStyle(
             color: controller.text.isEmpty
                 ? Colors.grey.shade800
-                : ColorResource.PRIMARY_BLUE,
+                : ColorResource.PRIMARY_COLOR,
           ),
           prefixIcon: prefix,
           suffix: suffix,
@@ -99,7 +99,7 @@ class AppInputField extends StatelessWidget {
             borderSide: BorderSide(
               color: controller.text.isEmpty
                   ? const Color(0xFFBCBCBC)
-                  : ColorResource.PRIMARY_BLUE,
+                  : ColorResource.PRIMARY_COLOR,
               width: 1.sp,
             ),
             borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
@@ -122,7 +122,7 @@ class AppInputField extends StatelessWidget {
             borderSide: BorderSide(
               color: controller.text.isEmpty
                   ? const Color(0xFFBCBCBC)
-                  : ColorResource.PRIMARY_BLUE,
+                  : ColorResource.PRIMARY_COLOR,
               width: 1.sp,
             ),
             borderRadius: BorderRadius.circular(borderRadius ?? 30.r),

@@ -36,11 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               const Spacer(),
 
-              Icon(
-                Icons.flutter_dash_rounded,
-                size: 140,
-                color: Colors.blueAccent,
-              ),
+              Icon(Icons.flutter_dash_rounded, size: 140),
               Text(
                 'Welcome aboard!',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),

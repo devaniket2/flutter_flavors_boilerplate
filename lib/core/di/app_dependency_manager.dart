@@ -3,6 +3,7 @@ import 'package:flutter_flavors_boilerplate/core/config/app_config.dart';
 import 'package:flutter_flavors_boilerplate/core/network/api_service.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_state.getx.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/splash/splash_state.getx.dart';
+import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview_state.getx.dart';
 import 'package:get/get.dart';
 
 /// A class that provides all registered view controllers and services
@@ -26,9 +27,12 @@ sealed class AppDependencyManager {
     // api service
     Get.put(ApiService());
 
-    // state controllers
+    // screen state controllers
     Get.put(SplashStateController());
     Get.put(DashboardStateController());
+
+    // view state controllers
+    Get.lazyPut(() => AppWebviewStateController());
   }
 
   /// Returns: `Type` view cntroller from `Widget Tree`

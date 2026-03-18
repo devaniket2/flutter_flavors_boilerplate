@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/extensions/widget_extensions.dart';
-import 'package:flutter_flavors_boilerplate/app/resources/app_strings.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/string_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PageNotFound extends StatelessWidget {
