@@ -6,11 +6,13 @@ class AppWebviewStateController extends GetxController {
   final RxString _title = ''.obs;
   final RxBool _canGoBack = false.obs;
   final RxBool _canGoForward = false.obs;
+  final RxBool _isAppbarVisible = true.obs;
 
   RxDouble get loadingPercentage => _loadingPercentage;
   RxString get title => _title;
   RxBool get canGoBack => _canGoBack;
   RxBool get canGoForward => _canGoForward;
+  RxBool get isAppbarVisible => _isAppbarVisible;
 
   void updateLoadingPercentage(double perc) {
     _loadingPercentage.value = perc;
@@ -26,5 +28,13 @@ class AppWebviewStateController extends GetxController {
 
   void updateCanGoFoward(bool value) {
     _canGoForward.value = value;
+  }
+
+  void showAppbar() {
+    _isAppbarVisible.value = true;
+  }
+
+  void hideAppbar() {
+    _isAppbarVisible.value = false;
   }
 }
