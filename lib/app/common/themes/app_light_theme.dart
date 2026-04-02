@@ -16,6 +16,7 @@ final ThemeData APP_LIGHT_THEME = ThemeData(
       fontSize: 16.0,
       color: ColorResource.SEMI_BLACK,
     ),
+    // flutter uses bodyMedium for default text style, so we set it to 14.0 and semi black color for light theme
     bodyMedium: _poppins.copyWith(
       fontSize: 14.0,
       color: ColorResource.SEMI_BLACK,
