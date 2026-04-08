@@ -1,11 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/extensions/widget_extensions.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_gradient_text.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -75,9 +76,70 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: 6.h),
         AppContainer(
           child: Container(
-            height: 120,
             width: 1.sw,
-            child: Center(child: Text('data')),
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              children: [
+                Text(
+                  "Body Large",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  "Body Medium",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(
+                  "Body Small",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Title Large",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                Text(
+                  "Title Medium",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  "Title Small",
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Display Large",
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                Text(
+                  "Display Medium",
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+                Text(
+                  "Display Small",
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Label Large",
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                Text(
+                  "Label Medium",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                Text(
+                  "Label Small",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                AppGradientText(
+                  text: 'Click Me!',
+                  fontSize: 31.sp,
+                  gradient: LinearGradient(
+                    colors: [Colors.redAccent, Colors.blueAccent],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -293,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text('11. Dialog Viewer', style: AppTextTheme.titleSmall(context)),
         SizedBox(height: 6.h),
         ElevatedButton(
-          onPressed: _showBlurredDialog,
+          onPressed: () => AppWidget.showDialog(dismissible: true),
           child: Text('Show Dialog'),
         ),
       ],
@@ -311,94 +373,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ],
   );
-
-  /// Shows a dialog with a blurred background using showGeneralDialog.
-  void _showBlurredDialog() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: 'Dialog',
-      barrierColor: Colors.black.withOpacity(
-        0.0,
-      ), // we handle dim in transitionBuilder
-      transitionDuration: const Duration(milliseconds: 250),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        // pageBuilder returns the dialog content only (no blur/dim here).
-        return SafeArea(
-          child: Center(
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                width: 0.85.sw,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).dialogBackgroundColor,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Dialog Title',
-                      style: AppTextTheme.titleMedium(context),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'This dialog blurs the background using BackdropFilter.',
-                    ),
-                    SizedBox(height: 16.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Close'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        // animation.value goes from 0.0 -> 1.0 when showing, and 1.0 -> 0.0 when dismissing.
-        final curved = Curves.easeOut.transform(animation.value);
-
-        // Configure maximum blur and maximum dim opacity
-        const double maxBlur = 6.0;
-        const double maxDimOpacity = 0.30;
-
-        // Current blur and dim based on animation progress
-        final double currentBlur = maxBlur * animation.value;
-        final double currentDim = maxDimOpacity * animation.value;
-
-        return Stack(
-          children: [
-            // Full-screen animated blur + dim overlay
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: currentBlur,
-                  sigmaY: currentBlur,
-                ),
-                child: Container(color: Colors.black.withOpacity(currentDim)),
-              ),
-            ),
-
-            // Animated dialog (fade + slight scale)
-            Opacity(
-              opacity: animation.value,
-              child: Transform.scale(scale: 0.95 + 0.05 * curved, child: child),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   /// Shows a bottom sheet while blurring the background.
   void _showBlurredBottomSheet() {

@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 
 class AppGradientText extends StatelessWidget {
-  const AppGradientText(
-    this.text, {
-    super.key,
-    required this.gradient,
-    this.style,
-  });
-
   final String text;
-  final TextStyle? style;
   final Gradient gradient;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final String? fontFamily;
+
+  const AppGradientText({
+    super.key,
+    required this.text,
+    required this.gradient,
+    this.fontSize,
+    this.fontWeight,
+    this.fontFamily,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback:
-          (bounds) => gradient.createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
-      child: Text(text, style: style),
+      shaderCallback: (bounds) {
+        return gradient.createShader(
+          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+        );
+      },
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white, // ignored by ShaderMask
+          fontSize: fontSize ?? 16.0, // default size
+          fontWeight: fontWeight ?? FontWeight.bold, // bold weight
+          fontFamily: fontFamily,
+        ),
+      ),
     );
   }
 }

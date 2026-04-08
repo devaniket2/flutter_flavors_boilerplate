@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-final TextStyle _poppins = TextStyle(fontFamily: 'Lato');
+final TextStyle _poppins = GoogleFonts.poppins();
 
 final ThemeData APP_DARK_THEME = ThemeData(
   appBarTheme: const AppBarTheme(foregroundColor: ColorResource.PRIMARY_COLOR),
