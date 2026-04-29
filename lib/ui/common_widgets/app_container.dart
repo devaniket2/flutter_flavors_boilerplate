@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppContainer extends StatelessWidget {
@@ -10,6 +12,7 @@ class AppContainer extends StatelessWidget {
   final double? radius;
   final List<BoxShadow>? boxShadow;
   final Offset? shadowOffset;
+  final BoxBorder? border;
   final EdgeInsets? boxPadding;
   const AppContainer({
     super.key,
@@ -20,6 +23,7 @@ class AppContainer extends StatelessWidget {
     this.radius,
     this.boxShadow,
     this.shadowOffset,
+    this.border,
     this.boxPadding,
     this.elevation,
   });
@@ -31,23 +35,61 @@ class AppContainer extends StatelessWidget {
       width: width,
       padding: boxPadding,
       decoration: BoxDecoration(
-        color: background ?? Theme.of(context).canvasColor,
+        color: _backgroundColor(context),
+        gradient: _gradientBackground(context),
         borderRadius: BorderRadius.circular(radius ?? 12.r),
-        boxShadow:
-            boxShadow ??
-            [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: elevation ?? .2),
-                offset: shadowOffset ?? const Offset(0, 2),
-                blurRadius: 5,
-                spreadRadius: 2,
-              ),
-            ],
+        border: AppUtils.isDarkMode(context) && border == null
+            ? Border(
+                right: BorderSide(color: Colors.white10, width: .5),
+                top: BorderSide(color: Colors.white10, width: .5),
+              )
+            : border,
+        boxShadow: _boxShadow(context),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius ?? 12.r),
         child: child,
       ),
     );
+  }
+
+  Color? _backgroundColor(BuildContext context) {
+    if (background != null) return background!;
+
+    if (AppUtils.isDarkMode(context)) {
+      return null;
+    }
+
+    return Theme.of(context).canvasColor;
+  }
+
+  LinearGradient? _gradientBackground(BuildContext context) {
+    if (AppUtils.isDarkMode(context) && background == null) {
+      return const LinearGradient(
+        begin: Alignment.bottomLeft,
+        end: Alignment.topRight,
+        colors: [
+          ColorResource.CANVAS_DARK_PRIMARY,
+          ColorResource.CANVAS_DARK_SECONDARY,
+        ],
+      );
+    } else {
+      return null;
+    }
+  }
+
+  List<BoxShadow> _boxShadow(BuildContext context) {
+    if (boxShadow != null && (boxShadow?.isNotEmpty ?? false)) {
+      return boxShadow!;
+    }
+
+    return [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: elevation ?? .2),
+        blurRadius: 6,
+        spreadRadius: 0,
+        offset: shadowOffset ?? const Offset(0, 4),
+      ),
+    ];
   }
 }

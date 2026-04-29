@@ -44,9 +44,11 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSize {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: AppTextTheme.titleMedium(
-                    context,
-                  ).copyWith(color: ColorResource.SEMI_WHITE),
+                  style: AppTextTheme.titleMedium(context).copyWith(
+                    color: _isInDarkMode(context)
+                        ? ColorResource.TEXT_TITLE_LIGHT
+                        : ColorResource.TEXT_TITLE_DARK,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -57,6 +59,10 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSize {
         ],
       ),
     );
+  }
+
+  bool _isInDarkMode(context) {
+    return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
   }
 
   @override

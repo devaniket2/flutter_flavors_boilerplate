@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_flavors_boilerplate/app/common/extensions/widget_extensions.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
@@ -75,71 +74,62 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         SizedBox(height: 6.h),
         AppContainer(
-          child: Container(
-            width: 1.sw,
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              children: [
-                Text(
-                  "Body Large",
-                  style: Theme.of(context).textTheme.bodyLarge,
+          width: 1.sw,
+          child: Column(
+            children: [
+              Text("Body Large", style: Theme.of(context).textTheme.bodyLarge),
+              Text(
+                "Body Medium",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text("Body Small", style: Theme.of(context).textTheme.bodySmall),
+              SizedBox(height: 12),
+              Text(
+                "Title Large",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                "Title Medium",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                "Title Small",
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              SizedBox(height: 12),
+              Text(
+                "Display Large",
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+              Text(
+                "Display Medium",
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              Text(
+                "Display Small",
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+              SizedBox(height: 12),
+              Text(
+                "Label Large",
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Text(
+                "Label Medium",
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              Text(
+                "Label Small",
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              AppGradientText(
+                text: 'Click Me!',
+                fontSize: 31.sp,
+                gradient: LinearGradient(
+                  colors: [Colors.redAccent, Colors.blueAccent],
                 ),
-                Text(
-                  "Body Medium",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  "Body Small",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                SizedBox(height: 12),
-                Text(
-                  "Title Large",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                Text(
-                  "Title Medium",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  "Title Small",
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                SizedBox(height: 12),
-                Text(
-                  "Display Large",
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                Text(
-                  "Display Medium",
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                Text(
-                  "Display Small",
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 12),
-                Text(
-                  "Label Large",
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                Text(
-                  "Label Medium",
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                Text(
-                  "Label Small",
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-                AppGradientText(
-                  text: 'Click Me!',
-                  fontSize: 31.sp,
-                  gradient: LinearGradient(
-                    colors: [Colors.redAccent, Colors.blueAccent],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -226,18 +216,21 @@ class _HomeScreenState extends State<HomeScreen> {
         Text('5. Buttons', style: AppTextTheme.titleSmall(context)),
         SizedBox(height: 6.h),
         AppButton(
+          height: 45,
+          width: 120,
           onTap: () async {
-            await Future.delayed(const Duration(seconds: 2));
-            print('done waiting');
+            await Future.delayed(Durations.medium1);
           },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FaIcon(FontAwesomeIcons.person),
-              SizedBoxExtension.width(6.w),
-              Text('Get Access'),
-            ],
-          ),
+          child: Text('Tap me'),
+        ),
+        SizedBox(height: 4.h),
+        AppButton.icon(
+          size: 42.sp,
+          loaderSize: 42.sp,
+          onTap: () async {
+            await Future.delayed(Durations.medium1);
+          },
+          icon: Icon(Icons.thumb_up, color: Colors.white),
         ),
       ],
     );
@@ -293,8 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Text('8. CheckBox', style: AppTextTheme.titleSmall(context)),
         SizedBox(height: 6.h),
-        CheckboxListTile(
-          title: Text('Accept Terms'),
+        Checkbox(
           value: _checked,
           onChanged: (val) => setState(() => _checked = val ?? false),
         ),
@@ -355,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text('11. Dialog Viewer', style: AppTextTheme.titleSmall(context)),
         SizedBox(height: 6.h),
         ElevatedButton(
-          onPressed: () => AppWidget.showDialog(dismissible: true),
+          onPressed: () => AppWidget.showDialog(dismissible: false),
           child: Text('Show Dialog'),
         ),
       ],

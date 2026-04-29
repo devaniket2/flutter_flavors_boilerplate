@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/string_resource.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview_state.getx.dart';
@@ -27,6 +28,8 @@ class _AppWebviewState extends State<AppWebview> {
   final _appbarAnimationDuration = const Duration(milliseconds: 350);
 
   int _lastScrolled_Y = 0;
+
+  bool get isDarkMode => Theme.of(context).brightness == Brightness.dark;
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +151,9 @@ class _AppWebviewState extends State<AppWebview> {
                                     horizontal: 12.w,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFEBEBEB), // light theme
-                                    // Color(0xff333333) // for dark theme
+                                    color: isDarkMode
+                                        ? ColorResource.CANVAS_DARK_SECONDARY
+                                        : ColorResource.CANVAS_LIGHT_SECONDARY,
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                   child: AnimatedSwitcher(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_state.getx.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/pages/home/home_screen.dart';
+import 'package:flutter_flavors_boilerplate/ui/screens/themes_demo_view/themes_demo_view_screen.dart';
 import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview.dart';
 import 'package:get/state_manager.dart';
 
@@ -40,8 +41,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (val) => _changePage(val),
-        // children: [const HomeScreen(), AboutScreen()],
-        children: [const HomeScreen(), const AppWebview()],
+        children: [
+          const HomeScreen(),
+          const AppWebview(),
+          const ThemeDemoViewScreen(),
+        ],
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
@@ -55,6 +59,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.help_outline_rounded),
               label: "About",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.gradient_outlined),
+              label: "Themes",
             ),
           ],
         ),

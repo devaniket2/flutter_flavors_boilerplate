@@ -3,146 +3,134 @@ import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_tex
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppInputField extends StatelessWidget {
-  // required
-  final TextEditingController controller;
-
-  // optional
-  final String? tag; // Add a tag to identify the field
-  final String? label;
-  final bool floatingLabel;
-  final String? value;
-  final double? width;
-  final double? height;
-  final Widget? prefix;
-  final Widget? suffix;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-  final int? maxLines;
-  final int? maxLength;
-  final bool enabled;
-  final bool? obscuredText;
-  final FocusNode? focusNode;
-  final bool textCenterAligned;
-  final double? hintTextSize;
-  final double? borderRadius;
-  final VoidCallback? onTap;
-  final void Function(String)? onChanged;
-  final TextStyle? counterStyle;
-  const AppInputField({
+class AppInputField extends FormField<String> {
+  AppInputField({
     super.key,
-    required this.controller,
-    this.tag = "",
-    this.floatingLabel = false,
-    this.label,
-    this.value,
-    this.prefix,
-    this.validator,
-    this.keyboardType,
-    this.maxLines,
-    this.textCenterAligned = false,
-    this.hintTextSize,
-    this.onChanged,
-    this.onTap,
-    this.enabled = true,
-    this.width,
-    this.height,
-    this.maxLength,
-    this.counterStyle,
-    this.focusNode,
-    this.obscuredText,
-    this.suffix,
-    this.borderRadius,
-  });
+    super.validator,
+    // required
+    required TextEditingController controller,
+    // optional
+    String? tag,
+    String? label,
+    bool floatingLabel = true,
+    String? value,
+    double? width,
+    double? height,
+    Widget? prefix,
+    Widget? suffix,
+    TextInputType? keyboardType,
 
-  @override
-  Widget build(BuildContext context) {
-    // actual widget
-    return SizedBox(
-      width: width ?? .75.sw,
-      height: height,
-      child: TextFormField(
-        controller: controller,
-        initialValue: value,
-        enabled: enabled,
-        onChanged: onChanged,
-        onTap: onTap,
-        focusNode: focusNode,
-        obscureText: obscuredText ?? false,
-        textAlign: textCenterAligned ? TextAlign.center : TextAlign.start,
-        maxLines: maxLines ?? 1,
-        maxLength: maxLength,
-        style: AppTextTheme.titleSmall(context).copyWith(
-          color: Colors.black,
-          fontWeight: FontWeight.w600,
-          fontSize: 15.sp,
-        ),
-        validator: validator,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          label: floatingLabel ? Text(label ?? 'Label') : null,
-          labelStyle: TextStyle(
-            color: controller.text.isEmpty
-                ? Colors.grey.shade800
-                : ColorResource.PRIMARY_COLOR,
-          ),
-          prefixIcon: prefix,
-          suffix: suffix,
-          counterStyle: counterStyle,
-          errorStyle: counterStyle,
-          fillColor: (enabled) ? Colors.white : Colors.grey.shade300,
-          filled: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+    int? maxLines,
+    int? maxLength,
+    bool enabled = true,
+    bool? obscuredText,
+    FocusNode? focusNode,
+    bool textCenterAligned = false,
+    double? hintTextSize,
+    double? borderRadius,
+    VoidCallback? onTap,
+    void Function(String)? onChanged,
+    TextStyle? counterStyle,
+  }) : super(
+         initialValue: value ?? controller.text,
+         autovalidateMode: AutovalidateMode.onUserInteraction,
+         builder: (FormFieldState<String> field) {
+           Color? fieldFillColor;
+           if (field.hasError) {
+             fieldFillColor = Colors.red.shade100.withValues(alpha: .3);
+           } else if (enabled) {
+             fieldFillColor = Colors.white;
+           } else {
+             fieldFillColor = Colors.grey.shade500;
+           }
 
-          // enable border - default state
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: controller.text.isEmpty
-                  ? const Color(0xFFBCBCBC)
-                  : ColorResource.PRIMARY_COLOR,
-              width: 1.sp,
-            ),
-            borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
-          ),
+           return SizedBox(
+             width: width ?? .9.sw,
+             height: height,
+             child: TextField(
+               controller: controller,
+               enabled: enabled,
+               onChanged: (val) {
+                 field.didChange(val); // sync with Form
+                 if (onChanged != null) onChanged(val);
+               },
+               onTap: onTap,
+               focusNode: focusNode,
+               obscureText: obscuredText ?? false,
+               textAlign: textCenterAligned
+                   ? TextAlign.center
+                   : TextAlign.start,
+               maxLines: maxLines ?? 1,
+               maxLength: maxLength,
+               style: AppTextTheme.titleSmall(
+                 field.context,
+               ).copyWith(color: Colors.black, fontSize: 15.sp),
+               keyboardType: keyboardType,
+               decoration: InputDecoration(
+                 label: floatingLabel ? Text(label ?? 'Label') : null,
+                 labelStyle: TextStyle(
+                   color: controller.text.isEmpty
+                       ? Colors.grey.shade800
+                       : ColorResource.PRIMARY,
+                 ),
+                 prefixIcon: prefix,
+                 suffix: suffix,
+                 counterStyle: counterStyle,
+                 errorStyle: counterStyle,
+                 errorText: field.errorText, // <-- managed by FormField
+                 fillColor: fieldFillColor,
+                 filled: true,
+                 contentPadding: EdgeInsets.symmetric(
+                   vertical: 8.h,
+                   horizontal: 12.w,
+                 ),
 
-          // disable border - disable state
-          disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 1.sp),
-            borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
-          ),
+                 enabledBorder: OutlineInputBorder(
+                   borderSide: BorderSide(
+                     color: controller.text.isEmpty
+                         ? const Color(0xFFBCBCBC)
+                         : ColorResource.PRIMARY,
+                     width: .6.sp,
+                   ),
+                   borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                 ),
+                 disabledBorder: OutlineInputBorder(
+                   borderSide: BorderSide(color: Colors.grey, width: .6.sp),
+                   borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                 ),
+                 errorBorder: OutlineInputBorder(
+                   borderSide: BorderSide(
+                     color: Colors.redAccent,
+                     width: .6.sp,
+                   ),
+                   borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                 ),
+                 focusedBorder: OutlineInputBorder(
+                   borderSide: BorderSide(
+                     color: controller.text.isEmpty
+                         ? const Color(0xFFBCBCBC)
+                         : ColorResource.PRIMARY,
+                     width: .6.sp,
+                   ),
+                   borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                 ),
+                 focusedErrorBorder: OutlineInputBorder(
+                   borderSide: BorderSide(
+                     color: Colors.redAccent,
+                     width: .6.sp,
+                   ),
+                   borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                 ),
 
-          // error border - has error, unfocused state
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.redAccent, width: 1.sp),
-            borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
-          ),
-
-          // focused border - focused state
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: controller.text.isEmpty
-                  ? const Color(0xFFBCBCBC)
-                  : ColorResource.PRIMARY_COLOR,
-              width: 1.sp,
-            ),
-            borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
-          ),
-
-          // focused border - focused state
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.redAccent, width: 1.sp),
-            borderRadius: BorderRadius.circular(borderRadius ?? 30.r),
-          ),
-
-          // hints
-          hintText: floatingLabel ? null : label,
-          hintStyle: AppTextTheme.titleSmall(context).copyWith(
-            color: const Color(0xFF656571),
-            fontWeight: FontWeight.w400,
-            fontSize: (hintTextSize ?? 14).sp,
-          ),
-        ),
-      ),
-    );
-  }
+                 hintText: floatingLabel ? null : label,
+                 hintStyle: AppTextTheme.titleSmall(field.context).copyWith(
+                   color: const Color(0xFF656571),
+                   fontWeight: FontWeight.w400,
+                   fontSize: (hintTextSize ?? 14).sp,
+                 ),
+               ),
+             ),
+           );
+         },
+       );
 }

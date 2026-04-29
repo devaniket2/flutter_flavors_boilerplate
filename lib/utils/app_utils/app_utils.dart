@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,5 +22,9 @@ sealed class AppUtils {
     } on Exception catch (e) {
       SnackbarManager.showError(e.toString());
     }
+  }
+
+  static bool isDarkMode(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
   }
 }

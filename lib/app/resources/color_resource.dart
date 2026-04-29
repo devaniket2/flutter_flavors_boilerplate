@@ -2,21 +2,44 @@ import 'package:flutter/material.dart';
 
 sealed class ColorResource {
   // primary
-  static const Color PRIMARY_COLOR = Colors.teal;
-  // primary accent
+  static const Color PRIMARY = Colors.teal;
   // secondary color
-  static const Color SECONDARY_COLOR = Colors.indigoAccent;
-  // secondary accent
-  // tertiary color
-  // tertiary accent
+  static const Color SECONDARY = Colors.indigoAccent;
+  // accent accent
+  static const Color ACCENT = Colors.purpleAccent;
 
-  /// utility colors
-  // whites
-  static const Color WHITE = Color(0xffffffff);
-  static const Color SEMI_WHITE = Color(0xfff8f8ff);
-  // blacks
-  static const Color BLACK = Color(0xff000000);
-  static const Color LIGHT_BLACK = Color(0xff100c08);
-  static const Color SEMI_BLACK = Color(0xff454545);
-  static const Color SEMI_BLACK_BG = Color(0xff1b1b1b);
+  // components colors
+  static const SCAFFOLD_BACKGROUND_LIGHT = Color(0xFFf3f3f3);
+  static const SCAFFOLD_BACKGROUND_DARK = Color(0xFF121212);
+
+  static const CANVAS_LIGHT_PRIMARY = Color(0xFFFAFAFA);
+  static const CANVAS_LIGHT_SECONDARY = Color(0xFFF0F0F0);
+
+  static const CANVAS_DARK_PRIMARY = Color(0xFF1E1E1E);
+  static const CANVAS_DARK_SECONDARY = Color(0xFF212121);
+
+  static const ON_CANVAS_LIGHT = Color(0xffE6E6E6);
+  static const ON_CANVAS_DARK = Color(0xff242424);
+
+  static const INPUT_BORDER = Color(0xFF4f4f4f);
+
+  // text colors
+  static const TEXT_SUBTITLE_LIGHT = Color(0xff9E9E9E);
+  static const TEXT_TITLE_LIGHT = Color(0xffE0E0E0);
+
+  static const TEXT_TITLE_DARK = Color(0xff212121);
+  static const TEXT_SUBTITLE_DARK = Color(0xff67707E);
+
+  // ui presntation colors
+  // Error
+  static const Color ERROR_LIGHT = Color(0xFFD32F2F);
+  static const Color ERROR_DARK = Color(0xFFCF6679);
+
+  // Success
+  static const Color SUCCESS_LIGHT = Color(0xFF388E3C);
+  static const Color SUCCESS_DARK = Color(0xFF81C784);
+
+  // Warning
+  static const Color WARNING_LIGHT = Color(0xFFED6C02);
+  static const Color WARNING_DARK = Color(0xFFFFB74D);
 }

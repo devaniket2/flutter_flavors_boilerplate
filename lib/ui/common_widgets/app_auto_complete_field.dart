@@ -26,6 +26,9 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode =
+        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+
     return FormField<T>(
       validator: validator,
       builder: (state) {
@@ -64,8 +67,8 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: textEditingController.text.isEmpty
-                                ? const Color(0xFFBCBCBC)
-                                : ColorResource.PRIMARY_COLOR,
+                                ? ColorResource.INPUT_BORDER
+                                : ColorResource.PRIMARY,
                             width: 1.sp,
                           ),
                           borderRadius: BorderRadius.circular(
@@ -99,8 +102,8 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: textEditingController.text.isEmpty
-                                ? const Color(0xFFBCBCBC)
-                                : ColorResource.PRIMARY_COLOR,
+                                ? ColorResource.INPUT_BORDER
+                                : ColorResource.PRIMARY,
                             width: 1.sp,
                           ),
                           borderRadius: BorderRadius.circular(
