@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -111,10 +112,6 @@ class _AppButtonState extends State<AppButton>
     super.dispose();
   }
 
-  bool isInDarkMode() {
-    return MediaQuery.platformBrightnessOf(context) == Brightness.dark;
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -169,7 +166,7 @@ class _AppButtonState extends State<AppButton>
     if (widget.flat) {
       return null;
     } else {
-      return isInDarkMode()
+      return AppUtils.isDarkMode(context)
           ? null
           : [
               BoxShadow(

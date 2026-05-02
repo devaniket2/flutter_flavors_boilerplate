@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppInputField extends FormField<String> {
@@ -35,17 +36,34 @@ class AppInputField extends FormField<String> {
          initialValue: value ?? controller.text,
          autovalidateMode: AutovalidateMode.onUserInteraction,
          builder: (FormFieldState<String> field) {
+           bool isDarkMode = AppUtils.isDarkMode(field.context);
+
            Color? fieldFillColor;
+
+           Color errorColor = isDarkMode
+               ? Color(0xfff27373)
+               : ColorResource.ERROR_LIGHT;
+
+           Color textColor = isDarkMode
+               ? ColorResource.TEXT_TITLE_LIGHT
+               : ColorResource.TEXT_TITLE_DARK;
+
+           Color borderColor = ColorResource.INPUT_BORDER;
+
            if (field.hasError) {
-             fieldFillColor = Colors.red.shade100.withValues(alpha: .3);
+             fieldFillColor = isDarkMode
+                 ? Colors.red.shade200.withValues(alpha: .1)
+                 : Colors.red.shade100.withValues(alpha: .3);
            } else if (enabled) {
-             fieldFillColor = Colors.white;
+             fieldFillColor = isDarkMode
+                 ? ColorResource.CANVAS_DARK_SECONDARY
+                 : ColorResource.CANVAS_LIGHT_PRIMARY;
            } else {
              fieldFillColor = Colors.grey.shade500;
            }
 
            return SizedBox(
-             width: width ?? .9.sw,
+             width: width ?? .88.sw,
              height: height,
              child: TextField(
                controller: controller,
@@ -62,21 +80,21 @@ class AppInputField extends FormField<String> {
                    : TextAlign.start,
                maxLines: maxLines ?? 1,
                maxLength: maxLength,
-               style: AppTextTheme.titleSmall(
+               style: AppTextTheme.bodySmall(
                  field.context,
-               ).copyWith(color: Colors.black, fontSize: 15.sp),
+               ).copyWith(color: field.hasError ? errorColor : textColor),
                keyboardType: keyboardType,
                decoration: InputDecoration(
                  label: floatingLabel ? Text(label ?? 'Label') : null,
                  labelStyle: TextStyle(
                    color: controller.text.isEmpty
-                       ? Colors.grey.shade800
+                       ? (field.hasError ? errorColor : textColor)
                        : ColorResource.PRIMARY,
                  ),
                  prefixIcon: prefix,
                  suffix: suffix,
-                 counterStyle: counterStyle,
-                 errorStyle: counterStyle,
+                 counterStyle: counterStyle ?? TextStyle(color: errorColor),
+                 errorStyle: counterStyle ?? TextStyle(color: errorColor),
                  errorText: field.errorText, // <-- managed by FormField
                  fillColor: fieldFillColor,
                  filled: true,
@@ -88,7 +106,7 @@ class AppInputField extends FormField<String> {
                  enabledBorder: OutlineInputBorder(
                    borderSide: BorderSide(
                      color: controller.text.isEmpty
-                         ? const Color(0xFFBCBCBC)
+                         ? borderColor
                          : ColorResource.PRIMARY,
                      width: .6.sp,
                    ),
@@ -99,26 +117,22 @@ class AppInputField extends FormField<String> {
                    borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
                  ),
                  errorBorder: OutlineInputBorder(
-                   borderSide: BorderSide(
-                     color: Colors.redAccent,
-                     width: .6.sp,
-                   ),
+                   borderSide: BorderSide(color: errorColor, width: .6.sp),
                    borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
                  ),
                  focusedBorder: OutlineInputBorder(
                    borderSide: BorderSide(
                      color: controller.text.isEmpty
-                         ? const Color(0xFFBCBCBC)
+                         ? (isDarkMode
+                               ? ColorResource.TEXT_SUBTITLE_LIGHT
+                               : ColorResource.TEXT_TITLE_DARK)
                          : ColorResource.PRIMARY,
                      width: .6.sp,
                    ),
                    borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
                  ),
                  focusedErrorBorder: OutlineInputBorder(
-                   borderSide: BorderSide(
-                     color: Colors.redAccent,
-                     width: .6.sp,
-                   ),
+                   borderSide: BorderSide(color: errorColor, width: .6.sp),
                    borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
                  ),
 

@@ -1,5 +1,15 @@
 sealed class AssetResource {
   AssetResource._();
 
-  // static const logo = "relative_path_to_logo";
+  // images
+
+  // svgs
+  static const image_placeholder_light_svg =
+      "assets/svg/placeholder_image_light.svg";
+  static const image_placeholder_dark_svg =
+      "assets/svg/placeholder_image_dark.svg";
+
+  // gifs
+
+  // videos
 }

@@ -1,11 +1,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_auto_complete_field.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_dropdown_field.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_gradient_text.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_input_field.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_network_image.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_widget.dart';
+import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -32,6 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Column(
               children: [
+                Text(
+                  'Image loading example',
+                  style: AppTextTheme.titleSmall(context),
+                ),
+                SizedBox(height: 12.h),
+                AppNetworkImage(
+                  imageUrl:
+                      'https://images.pexels.com/photos/37199912/pexels-photo-37199912.jpeg',
+                  width: 1.sw,
+                  height: 220,
+                ),
+
                 SizedBox(height: 12.h),
                 _largeContainer(),
                 SizedBox(height: 12.h),
@@ -56,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _showDialogs(),
                 SizedBox(height: 12.h),
                 _bottomSheet(),
+                SizedBox(height: 12.h),
+                _snackbars(),
               ],
             ),
           ),
@@ -221,7 +242,12 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () async {
             await Future.delayed(Durations.medium1);
           },
-          child: Text('Tap me'),
+          child: Text(
+            'Tap me',
+            style: AppTextTheme.bodySmall(
+              context,
+            ).copyWith(color: Colors.white),
+          ),
         ),
         SizedBox(height: 4.h),
         AppButton.icon(
@@ -295,32 +321,86 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _inputField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '9. Inputs Field and dropdown',
-          style: AppTextTheme.titleSmall(context),
-        ),
-        SizedBox(height: 6.h),
-        TextField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: 'Enter text',
+    final GlobalKey<FormState> formKey = GlobalKey();
+
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('9. Forms', style: AppTextTheme.titleSmall(context)),
+          SizedBox(height: 8.h),
+          AppInputField(
+            controller: TextEditingController(),
+            validator: (value) =>
+                value?.isEmpty ?? false ? 'must be filled' : null,
           ),
-        ),
-        SizedBox(height: 12.h),
-        DropdownButton<String>(
-          value: _dropdownValue,
-          hint: Text('Select option'),
-          items: [
-            'One',
-            'Two',
-            'Three',
-          ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-          onChanged: (val) => setState(() => _dropdownValue = val),
-        ),
-      ],
+          SizedBox(height: 6.h),
+          AppDropDownField<String>(
+            items:
+                [
+                      'Chicken',
+                      'Paneer',
+                      'Dosa',
+                      'Chutney',
+                      'Uttapam',
+                      'Idli',
+                      'Sambar',
+                      'Vada',
+                      'Biryani',
+                      'Paratha',
+                      'Rajma',
+                      'Dal Tadka',
+                      'Poha',
+                      'Pav Bhaji',
+                      'Chole Bhature',
+                      'Masala Chai',
+                      'Pakora',
+                      'Kofta Curry',
+                      'Rasam',
+                      'Kheer',
+                    ]
+                    .map(
+                      (item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      ),
+                    )
+                    .toList(),
+            onChanged: (val) {},
+            validator: (value) => value == null ? 'Select a FOOD' : null,
+          ),
+
+          SizedBox(height: 12.h),
+
+          AppAutoCompleteField<String>(
+            hint: 'Search for places...',
+            displayStringForOption: (option) =>
+                option, // how each option is shown
+            optionsBuilder: (TextEditingValue value) async {
+              // filter logic
+              if (value.text.isEmpty) return const [];
+              return ['Kolkata', 'Delhi', 'Mumbai', 'Chennai'].where(
+                (city) => city.toLowerCase().contains(value.text.toLowerCase()),
+              );
+            },
+            onSelected: (selected) {
+              debugPrint('Selected city: $selected');
+            },
+            validator: (val) => val == null ? 'Please select a city' : null,
+          ),
+
+          SizedBox(height: 12.h),
+
+          AppButton(
+            onTap: () async {
+              formKey.currentState?.validate();
+            },
+            width: 120,
+            child: Text('Submit'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -462,6 +542,54 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _snackbars() {
+    return Column(
+      children: [
+        Text('12. Snackbars', style: AppTextTheme.titleSmall(context)),
+        SizedBox(height: 6.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            AppButton(
+              backgroundColor: ColorResource.ACCENT,
+              onTap: () async {
+                SnackbarManager.show('message');
+              },
+              child: Text('Plain'),
+            ),
+            AppButton(
+              backgroundColor: AppUtils.isDarkMode(context)
+                  ? ColorResource.SUCCESS_DARK
+                  : ColorResource.SUCCESS_LIGHT,
+              onTap: () async {
+                SnackbarManager.showSuccess('message');
+              },
+              child: Text('Success'),
+            ),
+            AppButton(
+              backgroundColor: AppUtils.isDarkMode(context)
+                  ? ColorResource.WARNING_DARK
+                  : ColorResource.WARNING_LIGHT,
+              onTap: () async {
+                SnackbarManager.showWarning('Warning');
+              },
+              child: Text('Warning'),
+            ),
+            AppButton(
+              backgroundColor: AppUtils.isDarkMode(context)
+                  ? ColorResource.ERROR_DARK
+                  : ColorResource.ERROR_LIGHT,
+              onTap: () async {
+                SnackbarManager.showError('Something bad happened.');
+              },
+              child: Text('Error'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

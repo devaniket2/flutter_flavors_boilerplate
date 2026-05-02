@@ -32,14 +32,14 @@ sealed class ColorResource {
 
   // ui presntation colors
   // Error
-  static const Color ERROR_LIGHT = Color(0xFFD32F2F);
-  static const Color ERROR_DARK = Color(0xFFCF6679);
+  static const Color ERROR_LIGHT = Colors.redAccent;
+  static const Color ERROR_DARK = Color(0xFFD21312);
 
   // Success
-  static const Color SUCCESS_LIGHT = Color(0xFF388E3C);
-  static const Color SUCCESS_DARK = Color(0xFF81C784);
+  static const Color SUCCESS_LIGHT = Colors.green;
+  static const Color SUCCESS_DARK = Color(0xFF388E3C);
 
   // Warning
-  static const Color WARNING_LIGHT = Color(0xFFED6C02);
-  static const Color WARNING_DARK = Color(0xFFFFB74D);
+  static const Color WARNING_LIGHT = Colors.orangeAccent;
+  static const Color WARNING_DARK = Color(0xFFED6C02);
 }

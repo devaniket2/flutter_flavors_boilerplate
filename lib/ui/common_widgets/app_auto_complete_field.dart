@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppAutoCompleteField<T extends Object> extends StatelessWidget {
@@ -12,7 +13,10 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
   final String Function(T) displayStringForOption;
   final Widget Function(BuildContext, void Function(T), Iterable<T>)?
   optionsViewBuilder;
+  final bool enable;
   final FutureOr<Iterable<T>> Function(TextEditingValue) optionsBuilder;
+  final double? width;
+  final double? height;
   const AppAutoCompleteField({
     super.key,
     this.borderRadius,
@@ -22,16 +26,44 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
     this.optionsViewBuilder,
     this.onSelected,
     required this.displayStringForOption,
+    this.enable = true,
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode =
-        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    Color errorColor = AppUtils.isDarkMode(context)
+        ? Color(0xfff27373)
+        : ColorResource.ERROR_LIGHT;
 
     return FormField<T>(
       validator: validator,
+      enabled: enable,
       builder: (state) {
+        Color? fieldFillColor;
+
+        if (state.hasError) {
+          fieldFillColor = AppUtils.isDarkMode(context)
+              ? Colors.red.shade200.withValues(alpha: .1)
+              : Colors.red.shade100.withValues(alpha: .3);
+        } else if (enable) {
+          fieldFillColor = AppUtils.isDarkMode(context)
+              ? ColorResource.CANVAS_DARK_SECONDARY
+              : ColorResource.CANVAS_LIGHT_PRIMARY;
+        } else {
+          fieldFillColor = Colors.grey.shade500;
+        }
+
+        Color errorColor = AppUtils.isDarkMode(context)
+            ? Color(0xfff27373)
+            : ColorResource.ERROR_LIGHT;
+
+        Color textColor = AppUtils.isDarkMode(context)
+            ? ColorResource.TEXT_TITLE_LIGHT
+            : ColorResource.TEXT_TITLE_DARK;
+        Color borderColor = ColorResource.INPUT_BORDER;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -47,93 +79,97 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                     focusNode,
                     onFieldSubmitted,
                   ) {
-                    return TextFormField(
-                      controller: textEditingController,
-                      focusNode: focusNode,
-                      onFieldSubmitted: (value) => onFieldSubmitted,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 10,
-                        ),
-                        hintText: hint,
-                        hintStyle: AppTextTheme.titleSmall(context).copyWith(
-                          color: const Color(0xFF656571),
-                          fontWeight: FontWeight.w400,
-                          fontSize: (14).sp,
-                        ),
+                    return SizedBox(
+                      width: width ?? .88.sw,
+                      height: height,
+                      child: TextFormField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        onFieldSubmitted: (value) => onFieldSubmitted,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: fieldFillColor,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.h,
+                            horizontal: 12.w,
+                          ),
+                          hintText: hint,
+                          hintStyle: AppTextTheme.titleSmall(context).copyWith(
+                            color: const Color(0xFF656571),
+                            fontWeight: FontWeight.w400,
+                            fontSize: (14).sp,
+                          ),
 
-                        // enable border - default state
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: textEditingController.text.isEmpty
-                                ? ColorResource.INPUT_BORDER
-                                : ColorResource.PRIMARY,
-                            width: 1.sp,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: textEditingController.text.isEmpty
+                                  ? borderColor
+                                  : ColorResource.PRIMARY,
+                              width: .6.sp,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              borderRadius ?? 8.r,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(
-                            borderRadius ?? 30.r,
-                          ),
-                        ),
 
-                        // disable border - disable state
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 1.sp,
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: .6.sp,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              borderRadius ?? 8.r,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(
-                            borderRadius ?? 30.r,
-                          ),
-                        ),
 
-                        // error border - has error, unfocused state
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.redAccent,
-                            width: 1.sp,
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: errorColor,
+                              width: .6.sp,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              borderRadius ?? 8.r,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(
-                            borderRadius ?? 30.r,
-                          ),
-                        ),
 
-                        // focused border - focused state
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: textEditingController.text.isEmpty
-                                ? ColorResource.INPUT_BORDER
-                                : ColorResource.PRIMARY,
-                            width: 1.sp,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: textEditingController.text.isEmpty
+                                  ? (AppUtils.isDarkMode(context)
+                                        ? ColorResource.TEXT_SUBTITLE_LIGHT
+                                        : ColorResource.TEXT_TITLE_DARK)
+                                  : ColorResource.PRIMARY,
+                              width: .6.sp,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              borderRadius ?? 8.r,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(
-                            borderRadius ?? 30.r,
-                          ),
-                        ),
 
-                        // focused border - focused state
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.redAccent,
-                            width: 1.sp,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            borderRadius ?? 30.r,
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: errorColor,
+                              width: .6.sp,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              borderRadius ?? 8.r,
+                            ),
                           ),
                         ),
                       ),
                     );
                   },
             ),
+
             if (state.hasError) SizedBox(height: 3.h),
             if (state.hasError)
               Padding(
                 padding: const EdgeInsets.only(left: 14),
                 child: Text(
                   state.errorText ?? 'Can not be empty',
-                  style: AppTextTheme.bodySmall(
+                  style: AppTextTheme.labelSmall(
                     context,
-                  ).copyWith(color: Colors.redAccent, fontSize: 12),
+                  ).copyWith(color: errorColor),
                 ),
               ),
           ],

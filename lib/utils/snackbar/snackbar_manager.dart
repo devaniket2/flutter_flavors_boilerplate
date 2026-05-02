@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
+import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_flavors_boilerplate/utils/logger/app_logger.dart';
 
 enum SnackbarManagerType { SUCCESS, WARNING, ERROR, STANDARD }
@@ -14,14 +16,32 @@ class _SnackBarManagerStyleFormat {
 class SnackbarManager {
   SnackbarManager._();
 
-  static _SnackBarManagerStyleFormat _style(SnackbarManagerType type) {
+  static _SnackBarManagerStyleFormat _style(
+    BuildContext context,
+    SnackbarManagerType type,
+  ) {
     switch (type) {
       case SnackbarManagerType.SUCCESS:
-        return _SnackBarManagerStyleFormat(Colors.green, Colors.white);
+        return _SnackBarManagerStyleFormat(
+          AppUtils.isDarkMode(context)
+              ? ColorResource.SUCCESS_DARK
+              : ColorResource.SUCCESS_LIGHT,
+          Colors.white,
+        );
       case SnackbarManagerType.WARNING:
-        return _SnackBarManagerStyleFormat(Colors.orangeAccent, Colors.black);
+        return _SnackBarManagerStyleFormat(
+          AppUtils.isDarkMode(context)
+              ? ColorResource.WARNING_DARK
+              : ColorResource.WARNING_LIGHT,
+          ColorResource.TEXT_TITLE_DARK,
+        );
       case SnackbarManagerType.ERROR:
-        return _SnackBarManagerStyleFormat(Colors.redAccent, Colors.white);
+        return _SnackBarManagerStyleFormat(
+          AppUtils.isDarkMode(context)
+              ? ColorResource.ERROR_DARK
+              : ColorResource.ERROR_LIGHT,
+          Colors.white,
+        );
       case SnackbarManagerType.STANDARD:
         return _SnackBarManagerStyleFormat(Colors.grey.shade800, Colors.white);
     }
@@ -49,15 +69,15 @@ class SnackbarManager {
           message,
           maxLines: 4,
           overflow: TextOverflow.ellipsis,
-          style: AppTextTheme.bodyMedium(
+          style: AppTextTheme.bodySmall(
             context,
-          ).copyWith(color: _style(type).textColor),
+          ).copyWith(color: _style(context, type).textColor),
         ),
         behavior: SnackBarBehavior.floating,
         duration: autoDismissable
             ? const Duration(milliseconds: 2000)
             : const Duration(days: 1),
-        backgroundColor: _style(type).snackbarColor,
+        backgroundColor: _style(context, type).snackbarColor,
       ),
     );
   }

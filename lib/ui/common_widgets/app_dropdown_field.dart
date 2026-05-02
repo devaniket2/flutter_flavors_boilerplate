@@ -1,136 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppPrimaryDropDownField<T> extends StatefulWidget {
-  final List<DropdownMenuItem<T?>>? items;
-  final bool floatingLabel;
-  final T? value;
-  final Widget? hint;
-  final void Function(dynamic)? onChanged;
-  final String? Function(dynamic)? fieldValidator;
-  final String? errorText;
-  final double? width;
-  final double? height;
-  final Widget? prefix;
-  final Widget? suffix;
-  final TextStyle? counterStyle;
-  final double? borderRadius;
-  const AppPrimaryDropDownField({
+class AppDropDownField<T> extends FormField<T> {
+  AppDropDownField({
     super.key,
-    required this.items,
-    this.floatingLabel = false,
-    this.errorText,
-    this.prefix,
-    this.width,
-    this.counterStyle,
-    this.height,
-    this.suffix,
-    this.hint,
-    this.value,
-    this.fieldValidator,
-    this.borderRadius,
-    required this.onChanged,
-  });
+    required List<DropdownMenuItem<T>> items,
+    T? value,
+    String hint = 'Select',
+    bool floatingLabel = true,
+    super.validator,
+    void Function(T?)? onChanged,
+    String? errorText,
+    double? width,
+    double? height,
+    Widget? prefix,
+    Widget? suffix,
+    TextStyle? counterStyle,
+    double? borderRadius,
+    bool enabled = true,
+  }) : super(
+         initialValue: value,
+         builder: (FormFieldState<T> state) {
+           Color? fieldFillColor;
 
-  @override
-  State<AppPrimaryDropDownField> createState() =>
-      _AppPrimaryDropDownFieldState();
-}
+           Color textColor = AppUtils.isDarkMode(state.context)
+               ? ColorResource.TEXT_TITLE_LIGHT
+               : ColorResource.TEXT_TITLE_DARK;
 
-class _AppPrimaryDropDownFieldState extends State<AppPrimaryDropDownField> {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width ?? .75.sw,
-      height: widget.height,
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField(
-          value: widget.value,
-          isExpanded: true,
-          hint: widget.floatingLabel ? null : widget.hint,
-          items: widget.items,
-          validator: (value) {
-            if (value == null) {
-              return widget.errorText ?? 'Please select a value';
-            }
+           Color errorColor = AppUtils.isDarkMode(state.context)
+               ? const Color(0xfff27373)
+               : ColorResource.ERROR_LIGHT;
 
-            return null;
-          },
-          style: AppTextTheme.titleSmall(context).copyWith(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 15.sp,
-          ),
-          onChanged: widget.onChanged,
-          decoration: InputDecoration(
-            label: widget.floatingLabel ? widget.hint : null,
-            labelStyle: TextStyle(
-              color: widget.value == null
-                  ? Colors.grey.shade800
-                  : ColorResource.PRIMARY,
-            ),
-            prefixIcon: widget.prefix,
-            suffix: widget.suffix,
-            filled: true,
-            fillColor: Colors.white,
-            counterStyle: widget.counterStyle,
-            errorStyle: widget.counterStyle,
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 8.h,
-              horizontal: 12.w,
-            ),
+           if (state.hasError) {
+             fieldFillColor = AppUtils.isDarkMode(state.context)
+                 ? Colors.red.shade200.withValues(alpha: .1)
+                 : Colors.red.shade100.withValues(alpha: .3);
+           } else if (enabled) {
+             fieldFillColor = AppUtils.isDarkMode(state.context)
+                 ? ColorResource.CANVAS_DARK_SECONDARY
+                 : ColorResource.CANVAS_LIGHT_PRIMARY;
+           } else {
+             fieldFillColor = Colors.grey.shade500;
+           }
 
-            // enable border - default state
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: widget.value == null
-                    ? const Color(0xFFBCBCBC)
-                    : ColorResource.PRIMARY,
-                width: 1.sp,
-              ),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
-            ),
+           return SizedBox(
+             width: width ?? .88.sw,
+             height: height,
+             child: DropdownButtonHideUnderline(
+               child: DropdownButtonFormField<T>(
+                 initialValue: state.value,
+                 isExpanded: true,
+                 items: items,
+                 iconEnabledColor: state.hasError
+                     ? errorColor
+                     : AppUtils.isDarkMode(state.context)
+                     ? ColorResource.TEXT_SUBTITLE_LIGHT
+                     : ColorResource.CANVAS_DARK_SECONDARY,
+                 onChanged: (val) {
+                   state.didChange(val); // updates FormField state
+                   if (onChanged != null) onChanged(val);
+                 },
+                 validator: validator,
+                 style: AppTextTheme.bodySmall(
+                   state.context,
+                 ).copyWith(color: textColor),
+                 menuMaxHeight: .4.sh,
+                 decoration: InputDecoration(
+                   label: floatingLabel ? Text(hint) : null,
+                   labelStyle: AppTextTheme.bodySmall(
+                     state.context,
+                   ).copyWith(color: state.hasError ? errorColor : textColor),
+                   prefixIcon: prefix,
+                   suffix: suffix,
+                   filled: true,
+                   fillColor: fieldFillColor,
+                   counterStyle: counterStyle ?? TextStyle(color: errorColor),
+                   errorStyle: TextStyle(color: errorColor),
+                   errorText: state.errorText ?? errorText, // <-- key line
+                   contentPadding: EdgeInsets.symmetric(
+                     vertical: 8.h,
+                     horizontal: 12.w,
+                   ),
 
-            // disable border - disable state
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey, width: 1.sp),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
-            ),
+                   // enable border - default state
+                   enabledBorder: OutlineInputBorder(
+                     borderSide: BorderSide(
+                       color: value == null
+                           ? ColorResource.INPUT_BORDER
+                           : ColorResource.PRIMARY,
+                       width: .6.sp,
+                     ),
+                     borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                   ),
 
-            // error border - has error, unfocused state
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.redAccent, width: 1.sp),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
-            ),
+                   // disable border - disable state
+                   disabledBorder: OutlineInputBorder(
+                     borderSide: BorderSide(color: Colors.grey, width: .6.sp),
+                     borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                   ),
 
-            // focused border - focused state
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: widget.value == null
-                    ? const Color(0xFFBCBCBC)
-                    : ColorResource.PRIMARY,
-                width: 1.sp,
-              ),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
-            ),
+                   // error border - has error, unfocused state
+                   errorBorder: OutlineInputBorder(
+                     borderSide: BorderSide(color: errorColor, width: .6.sp),
+                     borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                   ),
 
-            // focused border - focused state
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.redAccent, width: 1.sp),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 30.r),
-            ),
+                   // focused border - focused state
+                   focusedBorder: OutlineInputBorder(
+                     borderSide: BorderSide(
+                       color: value == null
+                           ? ColorResource.TEXT_SUBTITLE_LIGHT
+                           : ColorResource.PRIMARY,
+                       width: .6.sp,
+                     ),
+                     borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                   ),
 
-            // hints
-            hintStyle: AppTextTheme.titleSmall(context).copyWith(
-              color: const Color(0xFF656571),
-              fontWeight: FontWeight.w400,
-              fontSize: (14).sp,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+                   // focused border - focused state
+                   focusedErrorBorder: OutlineInputBorder(
+                     borderSide: BorderSide(color: errorColor, width: .6.sp),
+                     borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+                   ),
+                 ),
+               ),
+             ),
+           );
+         },
+       );
 }
