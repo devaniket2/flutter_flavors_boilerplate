@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
+import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_auto_complete_field.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_dropdown_field
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_gradient_text.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_input_field.dart';
 import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_network_image.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_widget.dart';
 import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart';
@@ -31,7 +31,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PrimaryAppBar(title: 'Dynamic Widget Test'),
+      // appBar: PrimaryAppBar(
+      //   leading: InkWell(
+      //     onTap: () {
+      //       globalDrawerKey.currentState?.openDrawer();
+      //     },
+      //     child: Icon(Icons.menu_rounded),
+      //   ),
+      //   title: 'Dynamic Widget Test',
+      //   actions: [
+      //     IconButton(onPressed: () {}, icon: Icon(Icons.holiday_village)),
+      //   ],
+      // ),
       body: SizedBox(
         width: 1.sw,
         child: SingleChildScrollView(
@@ -240,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 45,
           width: 120,
           onTap: () async {
-            await Future.delayed(Durations.medium1);
+            AppNavigator.navigateTo(Screens.DASHBOARD);
           },
           child: Text(
             'Tap me',

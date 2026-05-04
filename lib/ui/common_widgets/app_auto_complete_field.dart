@@ -17,6 +17,7 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
   final FutureOr<Iterable<T>> Function(TextEditingValue) optionsBuilder;
   final double? width;
   final double? height;
+  final Color? hintColor;
   const AppAutoCompleteField({
     super.key,
     this.borderRadius,
@@ -29,14 +30,11 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
     this.enable = true,
     this.width,
     this.height,
+    this.hintColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color errorColor = AppUtils.isDarkMode(context)
-        ? Color(0xfff27373)
-        : ColorResource.ERROR_LIGHT;
-
     return FormField<T>(
       validator: validator,
       enabled: enable,
@@ -59,9 +57,6 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
             ? Color(0xfff27373)
             : ColorResource.ERROR_LIGHT;
 
-        Color textColor = AppUtils.isDarkMode(context)
-            ? ColorResource.TEXT_TITLE_LIGHT
-            : ColorResource.TEXT_TITLE_DARK;
         Color borderColor = ColorResource.INPUT_BORDER;
 
         return Column(
@@ -87,6 +82,7 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                         focusNode: focusNode,
                         onFieldSubmitted: (value) => onFieldSubmitted,
                         decoration: InputDecoration(
+                          errorText: state.errorText,
                           filled: true,
                           fillColor: fieldFillColor,
                           contentPadding: EdgeInsets.symmetric(
@@ -94,10 +90,11 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                             horizontal: 12.w,
                           ),
                           hintText: hint,
-                          hintStyle: AppTextTheme.titleSmall(context).copyWith(
-                            color: const Color(0xFF656571),
-                            fontWeight: FontWeight.w400,
-                            fontSize: (14).sp,
+                          hintStyle: AppTextTheme.bodySmall(context).copyWith(
+                            color: state.hasError
+                                ? errorColor
+                                : (hintColor ??
+                                      ColorResource.TEXT_SUBTITLE_LIGHT),
                           ),
 
                           enabledBorder: OutlineInputBorder(
@@ -155,23 +152,26 @@ class AppAutoCompleteField<T extends Object> extends StatelessWidget {
                               borderRadius ?? 8.r,
                             ),
                           ),
+
+                          counterStyle: TextStyle(color: errorColor),
+                          errorStyle: TextStyle(color: errorColor),
                         ),
                       ),
                     );
                   },
             ),
 
-            if (state.hasError) SizedBox(height: 3.h),
-            if (state.hasError)
-              Padding(
-                padding: const EdgeInsets.only(left: 14),
-                child: Text(
-                  state.errorText ?? 'Can not be empty',
-                  style: AppTextTheme.labelSmall(
-                    context,
-                  ).copyWith(color: errorColor),
-                ),
-              ),
+            // if (state.hasError) SizedBox(height: 3.h),
+            // if (state.hasError)
+            //   Padding(
+            //     padding: const EdgeInsets.only(left: 14),
+            //     child: Text(
+            //       state.errorText ?? 'Can not be empty',
+            //       style: AppTextTheme.labelSmall(
+            //         context,
+            //       ).copyWith(color: errorColor),
+            //     ),
+            //   ),
           ],
         );
       },

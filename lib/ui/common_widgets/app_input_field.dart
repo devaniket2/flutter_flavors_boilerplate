@@ -140,7 +140,7 @@ class AppInputField extends FormField<String> {
                  hintStyle: AppTextTheme.titleSmall(field.context).copyWith(
                    color: const Color(0xFF656571),
                    fontWeight: FontWeight.w400,
-                   fontSize: (hintTextSize ?? 14).sp,
+                   //  fontSize: (hintTextSize ?? 14).sp,
                  ),
                ),
              ),

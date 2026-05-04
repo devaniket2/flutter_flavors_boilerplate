@@ -194,7 +194,7 @@ final ThemeData APP_DARK_THEME = ThemeData(
   // Drawer
   drawerTheme: const DrawerThemeData(
     backgroundColor: ColorResource.CANVAS_DARK_PRIMARY,
-    scrimColor: ColorResource.TEXT_SUBTITLE_LIGHT,
+    scrimColor: Colors.black54,
     elevation: 16.0,
   ),
 

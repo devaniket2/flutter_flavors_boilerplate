@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
+import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_state.getx.dart';
 import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/pages/home/home_screen.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/themes_demo_view/themes_demo_view_screen.dart';
 import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview.dart';
 import 'package:get/state_manager.dart';
+
+final GlobalKey<ScaffoldState> globalDrawerKey = GlobalKey<ScaffoldState>();
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PrimaryAppBar(title: "About"),
+      body: const Center(
+        child: Text(
+          "This is the About page.\nHere you can describe your app.",
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
@@ -37,15 +56,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('FastView')),
+      drawer: Drawer(
+        key: globalDrawerKey,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Drawer header
+            DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+              child: const Text(
+                'Menu',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+
+            // About menu item
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.pop(context); // close drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (val) => _changePage(val),
-        children: [
-          const HomeScreen(),
-          const AppWebview(),
-          const ThemeDemoViewScreen(),
-        ],
+        children: [const HomeScreen(), const AppWebview()],
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
@@ -59,10 +104,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.help_outline_rounded),
               label: "About",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.gradient_outlined),
-              label: "Themes",
             ),
           ],
         ),

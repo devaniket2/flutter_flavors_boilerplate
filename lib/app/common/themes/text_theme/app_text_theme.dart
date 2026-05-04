@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 sealed class AppTextTheme {
-  static const TextStyle _defaultTextTheme = TextStyle(
-    fontSize: 12,
+  static final TextStyle _defaultTextTheme = TextStyle(
+    fontSize: 12.sp,
     decorationStyle: TextDecorationStyle.dotted,
     fontStyle: FontStyle.italic,
   );
@@ -61,39 +61,4 @@ sealed class AppTextTheme {
       _defaultTextTheme;
 
   // custom text styles
-  // static TextStyle bodySmall300(BuildContext context) => bodySmall(context)
-  //     .copyWith(fontWeight: FontWeight.w300, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle bodySmall500(BuildContext context) => bodySmall(context)
-  //     .copyWith(fontWeight: FontWeight.w500, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle bodySmall400(BuildContext context) => bodySmall(context)
-  //     .copyWith(fontWeight: FontWeight.w400, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle labelSmall300(BuildContext context) => labelSmall(context)
-  //     .copyWith(fontWeight: FontWeight.w300, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle labelSmall500(BuildContext context) => labelSmall(context)
-  //     .copyWith(fontWeight: FontWeight.w500, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle labelSmall400(BuildContext context) => labelSmall(context)
-  //     .copyWith(fontWeight: FontWeight.w400, color: ColorResource.LIGHT_BLACK);
-
-  // static TextStyle titleBlue400(BuildContext context) => bodyLarge(context)
-  //     .copyWith(fontWeight: FontWeight.w400, color: ColorResource.PRIMARY_BLUE);
-
-  // static TextStyle titleBlue600(BuildContext context) => bodyLarge(context)
-  //     .copyWith(fontWeight: FontWeight.w600, color: ColorResource.PRIMARY_BLUE);
-
-  // static TextStyle titleLightBlack16(BuildContext context) =>
-  //     bodyLarge(context).copyWith(
-  //         fontWeight: FontWeight.w500,
-  //         color: ColorResource.LIGHT_BLACK,
-  //         fontSize: 16.sp);
-
-  // static TextStyle labelXtraSmall(BuildContext context) =>
-  //     labelSmall(context).copyWith(
-  //         fontWeight: FontWeight.w400,
-  //         color: ColorResource.LIGHT_BLACK,
-  //         fontSize: 11.sp);
 }
