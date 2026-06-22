@@ -6,8 +6,6 @@ import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/pages/home/home
 import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview.dart';
 import 'package:get/state_manager.dart';
 
-final GlobalKey<ScaffoldState> globalDrawerKey = GlobalKey<ScaffoldState>();
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -55,45 +53,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('FastView')),
-      drawer: Drawer(
-        key: globalDrawerKey,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            // Drawer header
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: const Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+    return Obx(
+      () => Scaffold(
+        appBar: _stateController.currentPage.value != 1
+            ? AppBar(title: Text('FastView'))
+            : null,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // Drawer header
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: const Text(
+                  'Menu',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
               ),
-            ),
 
-            // About menu item
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
-              onTap: () {
-                Navigator.pop(context); // close drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AboutPage()),
-                );
-              },
-            ),
-          ],
+              // About menu item
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('About'),
+                onTap: () {
+                  Navigator.pop(context); // close drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AboutPage()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (val) => _changePage(val),
-        children: [const HomeScreen(), const AppWebview()],
-      ),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
+        body: NotificationListener<UserScrollNotification>(
+          onNotification: (notification) {
+            print(notification);
+
+            return false;
+          },
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (val) => _changePage(val),
+            children: [const HomeScreen(), const AppWebview()],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
           onTap: (value) => _changePage(value),
           currentIndex: _stateController.currentPage.value,
           items: [

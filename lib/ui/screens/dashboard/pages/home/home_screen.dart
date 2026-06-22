@@ -31,18 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: PrimaryAppBar(
-      //   leading: InkWell(
-      //     onTap: () {
-      //       globalDrawerKey.currentState?.openDrawer();
-      //     },
-      //     child: Icon(Icons.menu_rounded),
-      //   ),
-      //   title: 'Dynamic Widget Test',
-      //   actions: [
-      //     IconButton(onPressed: () {}, icon: Icon(Icons.holiday_village)),
-      //   ],
-      // ),
       body: SizedBox(
         width: 1.sw,
         child: SingleChildScrollView(

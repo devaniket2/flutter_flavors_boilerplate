@@ -30,7 +30,7 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    // final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
     final double topPadding = MediaQuery.of(context).padding.top;
 
     return Theme(
@@ -56,11 +56,9 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
               textAlign: TextAlign.center,
               style:
                   textStyle ??
-                  AppTextTheme.titleSmall(context).copyWith(
-                    color: isDark
-                        ? ColorResource.TEXT_TITLE_LIGHT
-                        : ColorResource.TEXT_TITLE_DARK,
-                  ),
+                  AppTextTheme.titleSmall(
+                    context,
+                  ).copyWith(color: ColorResource.TEXT_TITLE_LIGHT),
             ),
 
             // Leading widget aligned left
