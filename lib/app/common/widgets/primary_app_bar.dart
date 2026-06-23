@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/theme_manager.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
-import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:ui';
 
 class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -30,11 +29,11 @@ class PrimaryAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
     final double topPadding = MediaQuery.of(context).padding.top;
+    final ThemeData theme = context.watch<ThemeManager>().state.themeData;
 
     return Theme(
-      data: AppDependencyManager.getController<ThemeManager>().theme.copyWith(
+      data: theme.copyWith(
         iconTheme: IconThemeData(
           color: iconColor ?? ColorResource.ON_CANVAS_LIGHT,
         ),

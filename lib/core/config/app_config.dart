@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_flavors_boilerplate/app/common/constants/api_constants.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 enum BuildType { qa, production }
 
 /// A class that stores all the data related to app
 /// such as version, build number, build type, BASE_URL
-class AppConfig extends GetxService {
+class AppConfig {
   late final String appName;
   late final String appVersion;
   late final String appBundleID;

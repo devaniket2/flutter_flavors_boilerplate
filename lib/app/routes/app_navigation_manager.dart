@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_screen.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/not_found/not_found_screen.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/splash/splash_screen.dart';
+import 'package:flutter_flavors_boilerplate/app/common/screens/not_found/not_found_screen.dart';
+import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/screens/dasboard_screen.dart';
+import 'package:flutter_flavors_boilerplate/features/splash/presentation/screens/splash_screen.dart';
 import 'package:flutter_flavors_boilerplate/utils/logger/app_logger.dart';
 
 enum AppNavigationMode { PUSH, START, REPLACE }

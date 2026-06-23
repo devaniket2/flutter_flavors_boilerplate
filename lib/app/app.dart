@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_flavors_boilerplate/app/common/themes/theme.state.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/theme_manager.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/string_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
-import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class FlavorBoilerplateApp extends StatefulWidget with WidgetsBindingObserver {
   FlavorBoilerplateApp({super.key});
@@ -14,8 +14,7 @@ class FlavorBoilerplateApp extends StatefulWidget with WidgetsBindingObserver {
 }
 
 class _FlavorBoilerplateAppState extends State<FlavorBoilerplateApp> {
-  final ThemeManager themeManger =
-      AppDependencyManager.getController<ThemeManager>();
+  final ThemeManager _themeManager = ThemeManager();
 
   // listener for brigthness
   @override
@@ -25,7 +24,13 @@ class _FlavorBoilerplateAppState extends State<FlavorBoilerplateApp> {
   }
 
   void _onChangePlatformBrightess(Brightness brigthness) {
-    themeManger.setTheme(brigthness);
+    _themeManager.changeThemeOnBrightnessChange(brigthness);
+  }
+
+  @override
+  void dispose() {
+    _themeManager.close();
+    super.dispose();
   }
 
   @override
@@ -35,15 +40,18 @@ class _FlavorBoilerplateAppState extends State<FlavorBoilerplateApp> {
       minTextAdapt: true,
       splitScreenMode: false,
       builder: (context, child) {
-        // Obx for Theme widget observer
-        return Obx(
-          () => MaterialApp(
-            navigatorKey: GlobalContextKey.navigatorKey,
-            debugShowCheckedModeBanner: false,
-            title: StringResource.APP_TITLE,
-            theme: themeManger.theme,
-            onGenerateRoute: AppNavigator.getRoutes,
-            initialRoute: Screens.SPLASH_SCREEN,
+        // bloc builder
+        return BlocProvider.value(
+          value: _themeManager,
+          child: BlocBuilder<ThemeManager, ThemeState>(
+            builder: (context, state) => MaterialApp(
+              navigatorKey: GlobalContextKey.navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: StringResource.APP_TITLE,
+              theme: state.themeData,
+              onGenerateRoute: AppNavigator.getRoutes,
+              initialRoute: Screens.SPLASH_SCREEN,
+            ),
           ),
         );
       },

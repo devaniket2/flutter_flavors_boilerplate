@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/splash/splash_state.getx.dart';
+import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,20 +10,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // state controller
-  final SplashStateController _stateController =
-      AppDependencyManager.getController();
-
   @override
   void initState() {
     super.initState();
-    _stateController.initState();
-  }
-
-  @override
-  void dispose() {
-    _stateController.clearState();
-    super.dispose();
+    _redirect();
   }
 
   @override
@@ -50,5 +39,10 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+
+  void _redirect() async {
+    await Future.delayed(const Duration(seconds: 1));
+    AppNavigator.navigateTo(Screens.DASHBOARD, mode: AppNavigationMode.START);
   }
 }

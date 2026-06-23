@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/primary_app_bar.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/primary_app_bar/primary_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -14,6 +14,7 @@ class AboutScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
 
@@ -29,6 +30,7 @@ class AboutScreen extends StatelessWidget {
               ),
               Text(
                 '${AppDependencyManager.appConfig.deviceType}-${AppDependencyManager.appConfig.deviceID} ${AppDependencyManager.appConfig.deviceName}',
+                textAlign: TextAlign.center,
               ),
 
               const Spacer(),

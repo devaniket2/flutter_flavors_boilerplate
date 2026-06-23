@@ -1,7 +1,7 @@
 sealed class Validations {
   Validations._();
 
-  static final RegExp _phoneValidator = RegExp(r'^[0-9]{4,15}$');
+  static final RegExp _phoneValidator = RegExp(r'^[0-9]{9,11}$');
   static final RegExp _emailValidator = RegExp(
     r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,15}$',
   );

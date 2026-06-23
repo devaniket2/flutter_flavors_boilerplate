@@ -1,15 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_auto_complete_field.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_button.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_container.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_dropdown_field.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_gradient_text.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_input_field.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_network_image.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_auto_complete_field.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_button.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_container.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_dropdown_field.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_gradient_text.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_input_field.dart';
-import 'package:flutter_flavors_boilerplate/ui/common_widgets/app_network_image.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_widget.dart';
 import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart';
@@ -26,7 +26,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int? _selectedRadio;
   bool _checked = false;
-  String? _dropdownValue;
 
   @override
   Widget build(BuildContext context) {
