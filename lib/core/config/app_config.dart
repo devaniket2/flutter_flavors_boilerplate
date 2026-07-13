@@ -59,9 +59,4 @@ class AppConfig {
       return 'unsupported_device_type';
     }
   }
-
-  Map<String, dynamic> get deviceInfoMap => {
-    'device_id': deviceID,
-    'device_type': deviceType,
-  };
 }

@@ -4,7 +4,6 @@ import 'package:flutter_flavors_boilerplate/app/common/widgets/primary_app_bar.d
 import 'package:flutter_flavors_boilerplate/features/app_webview/presentation/screens/app_webview_screen.dart';
 import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/cubit/dashboard.state.dart';
 import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/cubit/dashboard_cubit.dart';
-import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/screens/pages/about_screen.dart';
 import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/screens/pages/home_screen.dart';
 
 class DashboardScreen extends StatefulWidget {

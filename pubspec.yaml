@@ -13,8 +13,10 @@ dependencies:
     sdk: flutter
   # ios icons 
   cupertino_icons: ^1.0.8
-  # font awesome icons
+  # icon pack
   font_awesome_flutter: ^11.0.0
+  # hugeicons: ^1.1.7
+  # phosphoricons_flutter: ^1.0.0
   # for state management
   flutter_bloc: ^9.1.1
   # for annotating state classes

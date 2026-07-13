@@ -309,14 +309,9 @@ class _AppWebviewScreenState extends State<AppWebviewScreen>
                           ),
 
                           // 4. Selector for Refresh / Close Action Button
-                          BlocSelector<
-                            AppWebviewCubit,
-                            AppWebviewState,
-                            double
-                          >(
-                            selector: (state) => state.loadingPercentage,
-                            builder: (context, loadingPercentage) {
-                              final isLoading = loadingPercentage != 100;
+                          BlocSelector<AppWebviewCubit, AppWebviewState, bool>(
+                            selector: (state) => state.loadingPercentage != 100,
+                            builder: (context, isLoading) {
                               return IconButton(
                                 onPressed: () async {
                                   if (isLoading) {

@@ -8,10 +8,12 @@ sealed class AppDependencyManager {
   static Future<void> setup(BuildType type) async {
     // 1. App Config service (Async registration)
     final config = await AppConfig().init(type);
+
+    // register config as singleton
     locator.registerSingleton<AppConfig>(config);
 
-    // 2. Api service (Depends on config being ready)
-    locator.registerLazySingleton<ApiService>(() => ApiService());
+    // 2. Api service
+    locator.registerSingleton(ApiService());
   }
 
   // Handy getters to easily fetch services across your data layer

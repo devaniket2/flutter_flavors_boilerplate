@@ -238,7 +238,10 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 45,
           width: 120,
           onTap: () async {
-            AppNavigator.navigateTo(Screens.DASHBOARD);
+            AppNavigator.navigateTo(
+              Screens.DASHBOARD,
+              mode: AppNavigationMode.START,
+            );
           },
           child: Text(
             'Tap me',
