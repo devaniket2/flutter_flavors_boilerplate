@@ -1,33 +1,39 @@
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/splash/cubit/splash.state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
   final AuthRepository authRepository;
 
-  SplashCubit(this.authRepository) : super(SplashState());
+  SplashCubit(this.authRepository) : super(SplashInitial());
 
   void getFirstInfoData() async {
-    emit(state.copyWith(isLoading: true));
+    emit(SplashLoading());
 
-    // mocking first call
-    await Future.delayed(2.seconds);
+    try {
+      // mocking first call
+      await Future.delayed(3.seconds);
 
-    emit(state.copyWith(isLoading: false));
+      // check for auth
+      await _checkAuthStatus();
 
-    _handleRedirection();
+      emit(SplashLoaded());
+    } catch (error) {
+      _handleError('Could not get inital app data: ${error.toString()}');
+    }
   }
 
-  void _handleRedirection() async {
+  Future<void> _checkAuthStatus() async {
     if (await authRepository.isLoggedin) {
-      AppNavigator.navigateTo(Screens.DASHBOARD, mode: AppNavigationMode.START);
+      emit(SplashAuthenticated());
     } else {
-      AppNavigator.navigateTo(
-        Screens.LOGIN_SCREEN,
-        mode: AppNavigationMode.START,
-      );
+      emit(SplashUnauthenticated());
     }
+  }
+
+  void _handleError(String error) {
+    emit(SplashLoaded());
+    emit(SplashError(error));
   }
 }

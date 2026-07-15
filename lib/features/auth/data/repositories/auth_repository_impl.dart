@@ -13,7 +13,7 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<AuthUserModel?> login() {
+  Future<AuthUserModel?> login(String email, String password) {
     // TODO: implement login
     throw UnimplementedError();
   }

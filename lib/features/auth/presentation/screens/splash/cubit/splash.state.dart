@@ -1,8 +1,17 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-part 'splash.state.freezed.dart';
+// base class
+abstract class SplashState {}
 
-@freezed
-abstract class SplashState with _$SplashState {
-  const factory SplashState({@Default(false) bool isLoading}) = _SplashState;
+class SplashInitial extends SplashState {}
+
+class SplashLoading extends SplashState {}
+
+class SplashLoaded extends SplashState {}
+
+class SplashAuthenticated extends SplashState {}
+
+class SplashUnauthenticated extends SplashState {}
+
+class SplashError extends SplashState {
+  final String error;
+  SplashError(this.error);
 }

@@ -2,6 +2,8 @@ import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_
 import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/data/repositories/mock_auth_repository.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/dashboard/cubit/dashboard_cubit.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/login/cubit/login_cubit.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/splash/cubit/splash_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_flavors_boilerplate/core/config/app_config.dart';
@@ -39,9 +41,15 @@ sealed class AppDependencyManager {
       () => MockAuthRepository(localDataSource: locator<AuthLocalDataSource>()),
     );
 
-    /////////////// cubits
+    /////////////// cubits - must use registerFactory
     locator.registerFactory<SplashCubit>(
       () => SplashCubit(locator<AuthRepository>()),
+    );
+    locator.registerFactory<LoginCubit>(
+      () => LoginCubit(locator<AuthRepository>()),
+    );
+    locator.registerFactory<DashboardCubit>(
+      () => DashboardCubit(locator<AuthRepository>()),
     );
   }
 

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DashboardState {
 
- int get currentPage;
+ int get currentPage; bool get isLoggedOut;
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DashboardStateCopyWith<DashboardState> get copyWith => _$DashboardStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardState&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardState&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.isLoggedOut, isLoggedOut) || other.isLoggedOut == isLoggedOut));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,currentPage);
+int get hashCode => Object.hash(runtimeType,currentPage,isLoggedOut);
 
 @override
 String toString() {
-  return 'DashboardState(currentPage: $currentPage)';
+  return 'DashboardState(currentPage: $currentPage, isLoggedOut: $isLoggedOut)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DashboardStateCopyWith<$Res>  {
   factory $DashboardStateCopyWith(DashboardState value, $Res Function(DashboardState) _then) = _$DashboardStateCopyWithImpl;
 @useResult
 $Res call({
- int currentPage
+ int currentPage, bool isLoggedOut
 });
 
 
@@ -62,10 +62,11 @@ class _$DashboardStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? currentPage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? currentPage = null,Object? isLoggedOut = null,}) {
   return _then(_self.copyWith(
 currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isLoggedOut: null == isLoggedOut ? _self.isLoggedOut : isLoggedOut // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -150,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int currentPage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int currentPage,  bool isLoggedOut)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
-return $default(_that.currentPage);case _:
+return $default(_that.currentPage,_that.isLoggedOut);case _:
   return orElse();
 
 }
@@ -171,10 +172,10 @@ return $default(_that.currentPage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int currentPage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int currentPage,  bool isLoggedOut)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState():
-return $default(_that.currentPage);case _:
+return $default(_that.currentPage,_that.isLoggedOut);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +192,10 @@ return $default(_that.currentPage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int currentPage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int currentPage,  bool isLoggedOut)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardState() when $default != null:
-return $default(_that.currentPage);case _:
+return $default(_that.currentPage,_that.isLoggedOut);case _:
   return null;
 
 }
@@ -206,10 +207,11 @@ return $default(_that.currentPage);case _:
 
 
 class _DashboardState implements DashboardState {
-  const _DashboardState({this.currentPage = 0});
+  const _DashboardState({this.currentPage = 0, this.isLoggedOut = false});
   
 
 @override@JsonKey() final  int currentPage;
+@override@JsonKey() final  bool isLoggedOut;
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +223,16 @@ _$DashboardStateCopyWith<_DashboardState> get copyWith => __$DashboardStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardState&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardState&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.isLoggedOut, isLoggedOut) || other.isLoggedOut == isLoggedOut));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,currentPage);
+int get hashCode => Object.hash(runtimeType,currentPage,isLoggedOut);
 
 @override
 String toString() {
-  return 'DashboardState(currentPage: $currentPage)';
+  return 'DashboardState(currentPage: $currentPage, isLoggedOut: $isLoggedOut)';
 }
 
 
@@ -241,7 +243,7 @@ abstract mixin class _$DashboardStateCopyWith<$Res> implements $DashboardStateCo
   factory _$DashboardStateCopyWith(_DashboardState value, $Res Function(_DashboardState) _then) = __$DashboardStateCopyWithImpl;
 @override @useResult
 $Res call({
- int currentPage
+ int currentPage, bool isLoggedOut
 });
 
 
@@ -258,10 +260,11 @@ class __$DashboardStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? currentPage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? currentPage = null,Object? isLoggedOut = null,}) {
   return _then(_DashboardState(
 currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isLoggedOut: null == isLoggedOut ? _self.isLoggedOut : isLoggedOut // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

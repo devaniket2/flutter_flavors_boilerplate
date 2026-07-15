@@ -11,6 +11,7 @@ import 'package:flutter_flavors_boilerplate/app/common/widgets/app_input_field.d
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_network_image.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
+import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_flavors_boilerplate/features/app_webview/presentation/app_webview_screen.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/dashboard/cubit/dashboard.state.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/dashboard/cubit/dashboard_cubit.dart';
@@ -20,14 +21,26 @@ import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => AppDependencyManager.dependency<DashboardCubit>(),
+      child: DashboardView(),
+    );
+  }
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
+
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
   late PageController _pageController;
 
   @override
@@ -44,79 +57,98 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DashboardCubit(),
-      child: Builder(
-        builder: (innnerContext) {
-          return BlocBuilder<DashboardCubit, DashboardState>(
-            builder: (context, state) {
-              return Scaffold(
-                appBar: state.currentPage != 1
-                    ? AppBar(title: Text('FastView'))
-                    : null,
-                drawer: Drawer(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      // Drawer header
-                      DrawerHeader(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        child: const Text(
-                          'Menu',
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                        ),
-                      ),
-
-                      // About menu item
-                      ListTile(
-                        leading: const Icon(Icons.info_outline),
-                        title: const Text('About'),
-                        onTap: () {
-                          Navigator.pop(context); // close drawer
-                          AppNavigator.navigateTo(Screens.ABOUT_SCREEN);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                body: NotificationListener<UserScrollNotification>(
-                  onNotification: (notification) {
-                    print(notification);
-
-                    return false;
-                  },
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (val) => _changePage(innnerContext, val),
-                    children: [const HomeScreen(), const AppWebviewScreen()],
-                  ),
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                  onTap: (value) => _changePage(innnerContext, value),
-                  currentIndex: state.currentPage,
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home_filled),
-                      label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.language_rounded),
-                      label: "Webview",
-                    ),
-                  ],
-                ),
-              );
-            },
+    return BlocListener<DashboardCubit, DashboardState>(
+      listener: (context, state) {
+        if (state.isLoggedOut) {
+          AppNavigator.navigateTo(
+            Screens.LOGIN_SCREEN,
+            mode: AppNavigationMode.START,
           );
-        },
+        }
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: BlocBuilder<DashboardCubit, DashboardState>(
+            builder: (context, state) => state.currentPage != 1
+                ? AppBar(title: Text('FastView'))
+                : const SizedBox.shrink(),
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // Drawer header
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: const Text(
+                  'Menu',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
+              ),
+
+              // About menu item
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('About'),
+                onTap: () {
+                  Navigator.pop(context); // close drawer
+                  AppNavigator.navigateTo(Screens.ABOUT_SCREEN);
+                },
+              ),
+
+              SizedBox(height: 22.h),
+
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 32.w),
+                child: AppButton(
+                  onTap: context.read<DashboardCubit>().logout,
+                  height: 35.h,
+                  child: Text('Log out'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: NotificationListener<UserScrollNotification>(
+          onNotification: (notification) {
+            print(notification);
+
+            return false;
+          },
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (val) => _changePage(val),
+            children: [const HomeScreen(), const AppWebviewScreen()],
+          ),
+        ),
+        bottomNavigationBar: BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, state) {
+            return BottomNavigationBar(
+              onTap: (value) => _changePage(value),
+              currentIndex: state.currentPage,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_filled),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.language_rounded),
+                  label: "Webview",
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  void _changePage(BuildContext context, int index) {
+  void _changePage(int index) {
     context.read<DashboardCubit>().changePage(index);
     _pageController.jumpToPage(index);
   }
