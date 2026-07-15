@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_flavors_boilerplate/app/common/screens/about/about_screen.dart';
 import 'package:flutter_flavors_boilerplate/app/common/screens/not_found/not_found_screen.dart';
-import 'package:flutter_flavors_boilerplate/features/dashboard/presentation/screens/dasboard_screen.dart';
-import 'package:flutter_flavors_boilerplate/features/splash/presentation/screens/splash_screen.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/dashboard/dashboard_screen.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/login/login_screen.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/splash/splash_screen.dart';
 import 'package:flutter_flavors_boilerplate/utils/logger/app_logger.dart';
 
 enum AppNavigationMode { PUSH, START, REPLACE }
@@ -11,6 +13,8 @@ sealed class Screens {
   Screens._();
 
   static const String SPLASH_SCREEN = '/';
+  static const String ABOUT_SCREEN = '/about';
+  static const String LOGIN_SCREEN = '/login';
   static const String DASHBOARD = '/dashboard';
 }
 
@@ -71,6 +75,12 @@ sealed class AppNavigator {
     switch (settings.name) {
       case Screens.SPLASH_SCREEN:
         return _buildRoute(const SplashScreen());
+
+      case Screens.ABOUT_SCREEN:
+        return _buildRoute(AboutScreen());
+
+      case Screens.LOGIN_SCREEN:
+        return _buildRoute(const LoginScreen());
 
       case Screens.DASHBOARD:
         return _buildRoute(const DashboardScreen());

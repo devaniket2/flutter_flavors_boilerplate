@@ -21,7 +21,7 @@ Future<void> _initAppServices() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // initiallize QA environment for app
-  await AppDependencyManager.setup(BuildType.qa);
+  await AppDependencyManager.setup(AppBuildEnv.qa);
 
   // detect network state changes
   StreamSubscription<List<ConnectivityResult>> networkActivityObserver =

@@ -3,7 +3,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_flavors_boilerplate/app/common/constants/api_constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-enum BuildType { qa, production }
+enum AppBuildEnv { qa, production }
 
 /// A class that stores all the data related to app
 /// such as version, build number, build type, BASE_URL
@@ -16,9 +16,9 @@ class AppConfig {
   late final String deviceID;
   late final String deviceType;
   late final String deviceName;
-  late final BuildType appBuildType;
+  late final AppBuildEnv appBuildType;
 
-  Future<AppConfig> init(BuildType type) async {
+  Future<AppConfig> init(AppBuildEnv type) async {
     // load values
     final PackageInfo info = await _loadAppInfo();
 
@@ -30,7 +30,7 @@ class AppConfig {
     deviceType = Platform.operatingSystem;
     deviceName = await _getDeviceName();
     appBuildType = type;
-    apiBaseUrl = type == BuildType.production
+    apiBaseUrl = type == AppBuildEnv.production
         ? ApiConstants.BASE_URL_PRODUCTION
         : ApiConstants.BASE_URL_QA;
     return this;

@@ -5,9 +5,9 @@ sealed class AssetResource {
 
   // svgs
   static const image_placeholder_light_svg =
-      "assets/svg/placeholder_image_light.svg";
+      "assets/svgs/placeholder_image_light.svg";
   static const image_placeholder_dark_svg =
-      "assets/svg/placeholder_image_dark.svg";
+      "assets/svgs/placeholder_image_dark.svg";
 
   // gifs
 

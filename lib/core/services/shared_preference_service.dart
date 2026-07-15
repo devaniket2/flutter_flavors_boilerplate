@@ -1,7 +1,4 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefernceKeys {
@@ -29,10 +26,7 @@ class SharedPrefernceService {
   }
 
   // Retrieve a String value
-  static Future<String> getString(
-    String key, {
-    String defaultValue = '',
-  }) async {
+  static Future<String?> getString(String key, {String? defaultValue}) async {
     final prefs = await preferences;
     final value = prefs.getString(key);
     return value ?? defaultValue;
