@@ -157,19 +157,22 @@ class _LoginViewState extends State<LoginView> {
                       }
                       return null;
                     },
-                    suffix: IconButton(
-                      icon: HugeIcon(
-                        icon: _obscurePassword
-                            ? HugeIcons.strokeRoundedView
-                            : HugeIcons.strokeRoundedViewOff,
-                        size: 20.sp,
-                        color: Theme.of(context).hintColor,
-                      ),
-                      onPressed: () {
+
+                    suffix: InkWell(
+                      onTap: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
                       },
+                      child: Padding(
+                        padding: EdgeInsets.all(14.r),
+                        child: HugeIcon(
+                          icon: _obscurePassword
+                              ? HugeIcons.strokeRoundedView
+                              : HugeIcons.strokeRoundedViewOff,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -194,7 +197,7 @@ class _LoginViewState extends State<LoginView> {
                     selector: (state) => state.isLoading,
                     builder: (context, isLoading) {
                       return AppButton(
-                        onTap: _onLoginPressed,
+                        onTap: isLoading ? () async {} : _onLoginPressed,
                         height: 45.h,
                         child: Text(
                           'Login',

@@ -118,25 +118,28 @@ class _AppButtonState extends State<AppButton>
       onTap: _handleTap,
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
-          alignment: widget.isIconButton ? null : Alignment.center,
-          width: widget.width,
-          height: widget.height,
-          padding:
-              widget.padding ??
-              EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
-          decoration: _buildDecoration(),
-          child: _isLoading
-              ? widget.loadingPlaceholder ??
-                    SizedBox(
-                      width: widget.loaderSize ?? 18.sp,
-                      height: widget.loaderSize ?? 18.sp,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 1,
-                      ),
-                    )
-              : widget.child,
+        child: Align(
+          alignment: Alignment.center,
+          child: Container(
+            alignment: widget.isIconButton ? null : Alignment.center,
+            width: widget.width,
+            height: widget.height ?? 32.h,
+            padding:
+                widget.padding ??
+                EdgeInsets.symmetric(vertical: 6.h, horizontal: 12.w),
+            decoration: _buildDecoration(),
+            child: _isLoading
+                ? widget.loadingPlaceholder ??
+                      SizedBox(
+                        width: widget.loaderSize ?? 18.sp,
+                        height: widget.loaderSize ?? 18.sp,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 1,
+                        ),
+                      )
+                : widget.child,
+          ),
         ),
       ),
     );

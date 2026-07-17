@@ -102,13 +102,22 @@ class _DashboardViewState extends State<DashboardView> {
 
               SizedBox(height: 22.h),
 
-              Padding(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 32.w),
-                child: AppButton(
-                  onTap: context.read<DashboardCubit>().logout,
-                  height: 35.h,
-                  child: Text('Log out'),
-                ),
+              AppButton(
+                onTap: () async {
+                  //context.read<DashboardCubit>().logout
+                  AppWidget.showDialog(
+                    title: Text(
+                      'Logging out?',
+                      style: AppTextTheme.titleSmall(context),
+                    ),
+                    content: Text(
+                      'Are you sure you want to logout?',
+                      style: AppTextTheme.bodyMedium(context),
+                    ),
+                  );
+                },
+                width: 120.w,
+                child: Text('Log out'),
               ),
             ],
           ),
@@ -189,7 +198,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 SizedBox(height: 12.h),
-                _largeContainer(),
+                _largeContainer1(),
+                SizedBox(height: 12.h),
+                _largeContainer2(),
                 SizedBox(height: 12.h),
                 _horizontalContainerList(),
                 SizedBox(height: 12.h),
@@ -222,12 +233,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _largeContainer() {
+  Widget _largeContainer1() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '1. Large Landscape Container',
+          '1. Large Landscape Container (Native Theme Text)',
           style: AppTextTheme.titleSmall(context),
         ),
         SizedBox(height: 6.h),
@@ -282,7 +293,52 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               AppGradientText(
                 text: 'Click Me!',
-                fontSize: 31.sp,
+                fontSize: 32.sp,
+                gradient: LinearGradient(
+                  colors: [Colors.redAccent, Colors.blueAccent],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _largeContainer2() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '1. Large Landscape Container (Modular AppTextTheme)',
+          style: AppTextTheme.titleSmall(context),
+        ),
+        SizedBox(height: 6.h),
+        AppContainer(
+          width: 1.sw,
+          child: Column(
+            children: [
+              Text("Body Large", style: AppTextTheme.bodyLarge(context)),
+              Text("Body Medium", style: AppTextTheme.bodyMedium(context)),
+              Text("Body Small", style: AppTextTheme.bodySmall(context)),
+              SizedBox(height: 12),
+              Text("Title Large", style: AppTextTheme.titleLarge(context)),
+              Text("Title Medium", style: AppTextTheme.titleMedium(context)),
+              Text("Title Small", style: AppTextTheme.titleSmall(context)),
+              SizedBox(height: 12),
+              Text("Display Large", style: AppTextTheme.displayLarge(context)),
+              Text(
+                "Display Medium",
+                style: AppTextTheme.displayMedium(context),
+              ),
+              Text("Display Small", style: AppTextTheme.displaySmall(context)),
+              SizedBox(height: 12),
+              Text("Label Large", style: AppTextTheme.labelLarge(context)),
+              Text("Label Medium", style: AppTextTheme.labelMedium(context)),
+              Text("Label Small", style: AppTextTheme.labelSmall(context)),
+              AppGradientText(
+                text: 'Click Me!',
+                fontSize: 32.sp,
                 gradient: LinearGradient(
                   colors: [Colors.redAccent, Colors.blueAccent],
                 ),

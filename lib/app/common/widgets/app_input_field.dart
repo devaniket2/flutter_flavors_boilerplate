@@ -92,7 +92,7 @@ class AppInputField extends FormField<String> {
                        : ColorResource.PRIMARY,
                  ),
                  prefixIcon: prefix,
-                 suffix: suffix,
+                 suffixIcon: suffix,
                  counterStyle: counterStyle ?? TextStyle(color: errorColor),
                  errorStyle: counterStyle ?? TextStyle(color: errorColor),
                  errorText: field.errorText, // <-- managed by FormField
