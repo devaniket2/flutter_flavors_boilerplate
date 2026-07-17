@@ -104,8 +104,7 @@ class _DashboardViewState extends State<DashboardView> {
 
               AppButton(
                 onTap: () async {
-                  //context.read<DashboardCubit>().logout
-                  AppWidget.showDialog(
+                  await AppWidget.showDialog(
                     title: Text(
                       'Logging out?',
                       style: AppTextTheme.titleSmall(context),
@@ -114,6 +113,11 @@ class _DashboardViewState extends State<DashboardView> {
                       'Are you sure you want to logout?',
                       style: AppTextTheme.bodyMedium(context),
                     ),
+                    cancelText: 'No',
+                    confirmText: 'Yes, I want to Logout',
+                    cancelTextColor: Colors.red,
+                    confirmTextColor: Colors.blueAccent,
+                    onConfirm: context.read<DashboardCubit>().logout,
                   );
                 },
                 width: 120.w,

@@ -1,24 +1,31 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 sealed class AppWidget {
   AppWidget._();
 
-  static void showDialog({
+  static Future<void> showDialog({
     Widget? title,
     Widget? content,
     bool showCancelButton = true,
     bool dismissible = true,
-  }) {
+    Color? cancelTextColor,
+    Color? confirmTextColor,
+    String? cancelText,
+    String? confirmText,
+    VoidCallback? onCancel,
+    VoidCallback? onConfirm,
+  }) async {
     final context = GlobalContextKey.navigatorKey.currentContext!;
     final controller = AnimationController(
       vsync: Navigator.of(context),
       duration: const Duration(milliseconds: 300),
     );
 
-    showGeneralDialog(
+    await showGeneralDialog(
       context: context,
       barrierDismissible: false, // allow taps outside
       barrierLabel: 'Dialog',
@@ -54,12 +61,49 @@ sealed class AppWidget {
                         children: [
                           if (showCancelButton)
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text('CANCEL'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                onCancel?.call();
+                              },
+                              style: ButtonStyle(
+                                overlayColor: WidgetStatePropertyAll(
+                                  cancelTextColor?.withValues(alpha: .1) ??
+                                      Theme.of(
+                                        context,
+                                      ).primaryColor.withValues(alpha: .1),
+                                ),
+                              ),
+                              child: Text(
+                                cancelText ?? 'CANCEL',
+                                style: AppTextTheme.bodyMedium(context)
+                                    .copyWith(
+                                      color:
+                                          cancelTextColor ??
+                                          Theme.of(context).primaryColor,
+                                    ),
+                              ),
                             ),
                           TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              onConfirm?.call();
+                            },
+                            style: ButtonStyle(
+                              overlayColor: WidgetStatePropertyAll(
+                                confirmTextColor?.withValues(alpha: .1) ??
+                                    Theme.of(
+                                      context,
+                                    ).primaryColor.withValues(alpha: .1),
+                              ),
+                            ),
+                            child: Text(
+                              confirmText ?? 'OK',
+                              style: AppTextTheme.bodyMedium(context).copyWith(
+                                color:
+                                    confirmTextColor ??
+                                    Theme.of(context).primaryColor,
+                              ),
+                            ),
                           ),
                         ],
                       ),
