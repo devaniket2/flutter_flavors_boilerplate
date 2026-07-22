@@ -8,6 +8,7 @@ import 'package:flutter_flavors_boilerplate/app/common/widgets/app_container.dar
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_dropdown_field.dart';
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_gradient_text.dart';
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_input_field.dart';
+import 'package:flutter_flavors_boilerplate/app/common/widgets/app_material_button.dart';
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_network_image.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/app/routes/app_navigation_manager.dart';
@@ -436,15 +437,10 @@ class _HomeScreenState extends State<HomeScreen> {
         AppButton(
           height: 45,
           width: 120,
-          onTap: () async {
-            AppNavigator.navigateTo(
-              Screens.DASHBOARD,
-              mode: AppNavigationMode.START,
-            );
-          },
+          onTap: () async {},
           child: Text(
             'Tap me',
-            style: AppTextTheme.bodySmall(
+            style: AppTextTheme.bodyMedium(
               context,
             ).copyWith(color: Colors.white),
           ),
@@ -452,12 +448,17 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: 4.h),
         AppButton.icon(
           size: 42.sp,
-          loaderSize: 42.sp,
           onTap: () async {
             await Future.delayed(Durations.medium1);
           },
           icon: Icon(Icons.thumb_up, color: Colors.white),
         ),
+
+        SizedBox(height: 8.h),
+
+        AppMaterialButton(onPressed: () {}, child: Text('Try me')),
+        AppMaterialButton.text(onPressed: () {}, text: 'Icon(Icons.abc)'),
+        AppMaterialButton.icon(onPressed: () {}, icon: Icon(Icons.abc)),
       ],
     );
   }

@@ -42,7 +42,7 @@ class AppButton extends StatefulWidget {
     required Future<void> Function() onTap,
     Color? backgroundColor,
     BorderRadius? borderRadius,
-    EdgeInsets? padding,
+    EdgeInsets? padding = const EdgeInsets.all(12),
     double? size,
     double? loaderSize,
     Widget? loadingPlaceholder,
@@ -133,9 +133,11 @@ class _AppButtonState extends State<AppButton>
                       SizedBox(
                         width: widget.loaderSize ?? 18.sp,
                         height: widget.loaderSize ?? 18.sp,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 1,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 1,
+                          ),
                         ),
                       )
                 : widget.child,
