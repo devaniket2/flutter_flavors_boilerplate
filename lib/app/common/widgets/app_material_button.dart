@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
-import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppMaterialButton extends StatelessWidget {
+class AppMaterialButton extends StatefulWidget {
   final Widget child;
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPress;
+  final FutureOr<void> Function()? onTap;
+  final FutureOr<void> Function()? onLongPress;
   final Color? backgroundColor;
   final Color? foregroundColor;
   final Color? disabledBackgroundColor;
@@ -23,7 +25,7 @@ class AppMaterialButton extends StatelessWidget {
   const AppMaterialButton({
     super.key,
     required this.child,
-    required this.onPressed,
+    required this.onTap,
     this.onLongPress,
     this.backgroundColor,
     this.foregroundColor,
@@ -43,8 +45,8 @@ class AppMaterialButton extends StatelessWidget {
   factory AppMaterialButton.icon({
     Key? key,
     required Widget icon,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
+    required FutureOr<void> Function()? onTap,
+    FutureOr<void> Function()? onLongPress,
     Color? backgroundColor,
     Color? foregroundColor,
     Color? disabledBackgroundColor,
@@ -59,7 +61,7 @@ class AppMaterialButton extends StatelessWidget {
   }) {
     return AppMaterialButton(
       key: key,
-      onPressed: onPressed,
+      onTap: onTap,
       onLongPress: onLongPress,
       backgroundColor: backgroundColor ?? ColorResource.PRIMARY,
       foregroundColor: foregroundColor,
@@ -82,11 +84,11 @@ class AppMaterialButton extends StatelessWidget {
   factory AppMaterialButton.text({
     Key? key,
     required String text,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
+    required FutureOr<void> Function()? onTap,
+    FutureOr<void> Function()? onLongPress,
     TextStyle? textStyle,
     Color? backgroundColor = Colors.transparent,
-    Color? foregroundColor,
+    Color? foregroundColor = ColorResource.PRIMARY,
     Color? disabledBackgroundColor = Colors.transparent,
     Color? disabledForegroundColor,
     Color? splashColor = ColorResource.PRIMARY,
@@ -100,7 +102,7 @@ class AppMaterialButton extends StatelessWidget {
   }) {
     return AppMaterialButton(
       key: key,
-      onPressed: onPressed,
+      onTap: onTap,
       onLongPress: onLongPress,
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
@@ -125,8 +127,8 @@ class AppMaterialButton extends StatelessWidget {
     Key? key,
     required Widget icon,
     required Widget label,
-    required VoidCallback? onPressed,
-    VoidCallback? onLongPress,
+    required FutureOr<void> Function()? onTap,
+    FutureOr<void> Function()? onLongPress,
     Color? backgroundColor,
     Color? foregroundColor,
     Color? disabledBackgroundColor,
@@ -164,7 +166,7 @@ class AppMaterialButton extends StatelessWidget {
 
     return AppMaterialButton(
       key: key,
-      onPressed: onPressed,
+      onTap: onTap,
       onLongPress: onLongPress,
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
@@ -183,69 +185,105 @@ class AppMaterialButton extends StatelessWidget {
   }
 
   @override
+  State<AppMaterialButton> createState() => _AppMaterialButtonState();
+}
+
+class _AppMaterialButtonState extends State<AppMaterialButton> {
+  bool _isLoading = false;
+
+  /// Helper to process both synchronous and asynchronous callbacks
+  Future<void> _handleAction(FutureOr<void> Function()? action) async {
+    if (action == null || _isLoading) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await action();
+    } finally {
+      // Prevents calling setState if the widget was unmounted during await
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    bool isDarkMode = AppUtils.isDarkMode(context);
 
     // Dynamic Shape & Border Configuration
     final OutlinedBorder shape = RoundedRectangleBorder(
-      borderRadius: borderRadius ?? BorderRadius.circular(12.0),
-      side: side ?? BorderSide.none,
+      borderRadius: widget.borderRadius ?? BorderRadius.circular(12.r),
+      side: widget.side ?? BorderSide.none,
     );
 
     // Material State Resolution
     final ButtonStyle style = ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.disabled)) {
-          return disabledBackgroundColor ??
+          return widget.disabledBackgroundColor ??
               theme.disabledColor.withValues(alpha: 0.12);
         }
-        return backgroundColor ?? theme.primaryColor;
+        return widget.backgroundColor ?? theme.primaryColor;
       }),
       foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.disabled)) {
-          return disabledForegroundColor ??
+          return widget.disabledForegroundColor ??
               theme.disabledColor.withValues(alpha: 0.38);
         }
-        return foregroundColor ??
-            (isDarkMode
-                ? ColorResource.TEXT_TITLE_LIGHT
-                : ColorResource.TEXT_TITLE_DARK);
+        return widget.foregroundColor ?? ColorResource.TEXT_TITLE_LIGHT;
       }),
       overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(WidgetState.pressed) && highlightColor != null) {
-          return highlightColor;
+        if (states.contains(WidgetState.pressed) &&
+            widget.highlightColor != null) {
+          return widget.highlightColor;
         }
         if (states.contains(WidgetState.focused) ||
             states.contains(WidgetState.hovered)) {
-          return splashColor?.withValues(alpha: 0.12);
+          return widget.splashColor?.withValues(alpha: 0.12);
         }
-        return splashColor;
+        return widget.splashColor;
       }),
       elevation: WidgetStateProperty.resolveWith<double>((states) {
         if (states.contains(WidgetState.disabled)) return 0.0;
-        final baseElevation = elevation ?? 2.0;
+        final baseElevation = widget.elevation ?? 2.0;
         if (states.contains(WidgetState.pressed) && baseElevation > 0) {
           return baseElevation + 2.0;
         }
         return baseElevation;
       }),
       padding: WidgetStateProperty.all<EdgeInsetsGeometry?>(
-        padding ?? const EdgeInsets.symmetric(horizontal: 24.0, vertical: 14.0),
+        widget.padding ??
+            const EdgeInsets.symmetric(horizontal: 24.0, vertical: 14.0),
       ),
       shape: WidgetStateProperty.all<OutlinedBorder>(shape),
       minimumSize: WidgetStateProperty.all<Size?>(
-        fullWidth
-            ? Size(double.infinity, minimumSize?.height ?? 48.0)
-            : minimumSize,
+        widget.fullWidth
+            ? Size(double.infinity, widget.minimumSize?.height ?? 48.0)
+            : widget.minimumSize,
       ),
     );
 
     return ElevatedButton(
-      onPressed: onPressed,
-      onLongPress: onLongPress,
+      // Pass null when loading to visually disable action triggers
+      onPressed: widget.onTap != null && !_isLoading
+          ? () => _handleAction(widget.onTap)
+          : null,
+      onLongPress: widget.onLongPress != null && !_isLoading
+          ? () => _handleAction(widget.onLongPress)
+          : null,
       style: style,
-      child: child,
+      child: _isLoading
+          ? SizedBox(
+              height: 20.r,
+              width: 20.r,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                // Automatically inherits text/icon color or white
+                color: widget.foregroundColor ?? ColorResource.TEXT_TITLE_LIGHT,
+              ),
+            )
+          : widget.child,
     );
   }
 }

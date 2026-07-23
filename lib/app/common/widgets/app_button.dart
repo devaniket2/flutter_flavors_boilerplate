@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/resources/color_resource.dart';
 import 'package:flutter_flavors_boilerplate/utils/app_utils/app_utils.dart';
@@ -5,7 +6,7 @@ import 'package:flutter_flavors_boilerplate/utils/snackbar/snackbar_manager.dart
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppButton extends StatefulWidget {
-  final Future<void> Function() onTap;
+  final FutureOr<void> Function()? onTap;
   final Widget child;
   final Color? backgroundColor;
   final BorderRadius? borderRadius;
@@ -99,9 +100,11 @@ class _AppButtonState extends State<AppButton>
     await _controller.forward();
     await _controller.reverse();
 
+    if (_isLoading) return;
+
     setState(() => _isLoading = true);
 
-    await widget.onTap();
+    await widget.onTap?.call();
 
     setState(() => _isLoading = false);
   }

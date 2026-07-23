@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
 import 'package:flutter_flavors_boilerplate/app/common/widgets/app_auto_complete_field.dart';
@@ -437,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
         AppButton(
           height: 45,
           width: 120,
-          onTap: () async {},
+          onTap: () {},
           child: Text(
             'Tap me',
             style: AppTextTheme.bodyMedium(
@@ -456,9 +457,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
         SizedBox(height: 8.h),
 
-        AppMaterialButton(onPressed: () {}, child: Text('Try me')),
-        AppMaterialButton.text(onPressed: () {}, text: 'Icon(Icons.abc)'),
-        AppMaterialButton.icon(onPressed: () {}, icon: Icon(Icons.abc)),
+        AppMaterialButton(
+          onTap: () async {
+            await Future.delayed(2.seconds);
+          },
+          child: Text('Try me'),
+        ),
+        AppMaterialButton.text(
+          onTap: () async {
+            await Future.delayed(2.seconds);
+          },
+          text: 'Take Action',
+        ),
+        AppMaterialButton.icon(
+          onTap: () async {
+            await Future.delayed(2.seconds);
+          },
+          icon: Icon(Icons.abc),
+        ),
       ],
     );
   }

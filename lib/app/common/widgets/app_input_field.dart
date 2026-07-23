@@ -80,7 +80,7 @@ class AppInputField extends FormField<String> {
                    : TextAlign.start,
                maxLines: maxLines ?? 1,
                maxLength: maxLength,
-               style: AppTextTheme.bodySmall(
+               style: AppTextTheme.bodyMedium(
                  field.context,
                ).copyWith(color: field.hasError ? errorColor : textColor),
                keyboardType: keyboardType,
