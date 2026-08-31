@@ -1,3 +1,4 @@
+import 'package:flutter_flavors_boilerplate/features/app_webview/cubit/app_webview_cubit.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_flavors_boilerplate/features/auth/data/repositories/mock_auth_repository.dart';
@@ -51,6 +52,7 @@ sealed class AppDependencyManager {
     locator.registerFactory<DashboardCubit>(
       () => DashboardCubit(locator<AuthRepository>()),
     );
+    locator.registerFactory<AppWebviewCubit>(() => AppWebviewCubit());
   }
 
   static T dependency<T extends Object>() => locator<T>();

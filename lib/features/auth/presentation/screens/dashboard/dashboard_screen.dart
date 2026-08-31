@@ -438,7 +438,9 @@ class _HomeScreenState extends State<HomeScreen> {
         AppButton(
           height: 45,
           width: 120,
-          onTap: () {},
+          onTap: () async {
+            await Future.delayed(Durations.medium4);
+          },
           child: Text(
             'Tap me',
             style: AppTextTheme.bodyMedium(
@@ -450,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
         AppButton.icon(
           size: 42.sp,
           onTap: () async {
-            await Future.delayed(Durations.medium1);
+            await Future.delayed(Durations.medium4);
           },
           icon: Icon(Icons.thumb_up, color: Colors.white),
         ),
