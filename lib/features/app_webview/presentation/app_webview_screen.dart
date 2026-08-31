@@ -18,7 +18,7 @@ class AppWebviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => AppDependencyManager.dependency<AppWebviewCubit>(),
-      child: AppWebviewView(),
+      child: const AppWebviewView(),
     );
   }
 }
@@ -35,27 +35,38 @@ class _AppWebviewViewState extends State<AppWebviewView>
   final String _baseUri = "https://www.google.com/search?q=wuthering waves";
 
   late InAppWebViewController _webViewController;
-  final _appbarAnimationDuration = const Duration(milliseconds: 280);
+  final _appbarAnimationDuration = const Duration(milliseconds: 250);
   bool get isDarkMode => Theme.of(context).brightness == Brightness.dark;
   final double iconSize = 14.sp;
-  final double appBarHeight = 60.h;
+  late final double appBarHeight = 80.h;
 
-  // var y state - web scroll direction detect
-  int previousY = -1;
-  final ValueNotifier<bool> _isAppbarVisible = ValueNotifier(true);
-  late final ValueNotifier<double> _webpageTopPosition;
+  int _lastValidY = 0;
+  late final AnimationController _appBarController;
+  late final Animation<double> _appBarSlideAnimation;
+  late final Animation<double> _webViewTranslateAnimation;
 
   @override
   void initState() {
     super.initState();
-    _webpageTopPosition = ValueNotifier(appBarHeight);
+    _appBarController = AnimationController(
+      vsync: this,
+      duration: _appbarAnimationDuration,
+    )..value = 1.0; // Starts fully visible
+
+    _appBarSlideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _appBarController, curve: Curves.easeInOut),
+    );
+
+    _webViewTranslateAnimation = Tween<double>(begin: 0.0, end: appBarHeight)
+        .animate(
+          CurvedAnimation(parent: _appBarController, curve: Curves.easeInOut),
+        );
   }
 
   @override
   void dispose() {
+    _appBarController.dispose();
     super.dispose();
-    _isAppbarVisible.dispose();
-    _webpageTopPosition.dispose();
   }
 
   @override
@@ -65,20 +76,19 @@ class _AppWebviewViewState extends State<AppWebviewView>
         alignment: Alignment.topCenter,
         children: [
           // -------------------------------------------------------------
-          // WEBVIEW LAYER (Now entirely static, won't rebuild on progress)
+          // WEBVIEW LAYER
           // -------------------------------------------------------------
           AnimatedBuilder(
-            animation: _webpageTopPosition,
+            animation: _webViewTranslateAnimation,
             builder: (context, child) {
-              print('object ${_webpageTopPosition.value}');
               return Transform.translate(
-                offset: Offset(0, _webpageTopPosition.value),
+                offset: Offset(0, _webViewTranslateAnimation.value),
                 child: child!,
               );
             },
             child: InAppWebView(
               initialSettings: InAppWebViewSettings(
-                algorithmicDarkeningAllowed: isDarkMode ? true : false,
+                algorithmicDarkeningAllowed: isDarkMode,
               ),
               initialUrlRequest: URLRequest(url: WebUri(_baseUri)),
               onWebViewCreated: (controller) {
@@ -115,165 +125,133 @@ class _AppWebviewViewState extends State<AppWebviewView>
                 }
               },
               onScrollChanged: (_, x, y) {
-                if (_isScrollingDown(y)) {
-                  _isAppbarVisible.value = false;
+                // 1. Force fully visible at the top edge
+                if (y <= 15) {
+                  if (!_appBarController.isCompleted) {
+                    _appBarController.forward();
+                  }
+                  _lastValidY = y;
+                  return;
+                }
+
+                // 2. Ignore minor micro-movements (require 12px change to trigger)
+                final delta = y - _lastValidY;
+                if (delta.abs() < 12) return;
+
+                // 3. Prevent reversing mid-animation (stops jittering/jumping)
+                if (_appBarController.isAnimating) return;
+
+                _lastValidY = y;
+
+                // 4. Trigger direction change safely
+                if (delta > 0) {
+                  if (_appBarController.isCompleted) {
+                    _appBarController.reverse();
+                  }
                 } else {
-                  _isAppbarVisible.value = true;
+                  if (_appBarController.isDismissed) {
+                    _appBarController.forward();
+                  }
                 }
               },
             ),
           ),
 
-          // ValueListenableBuilder(
-          //   valueListenable: _webpageTopPosition,
-          //   child: InAppWebView(
-          //     initialSettings: InAppWebViewSettings(
-          //       algorithmicDarkeningAllowed: isDarkMode ? true : false,
-          //     ),
-          //     initialUrlRequest: URLRequest(url: WebUri(_baseUri)),
-          //     onWebViewCreated: (controller) {
-          //       _webViewController = controller;
-          //     },
-          //     onProgressChanged: (controller, progress) {
-          //       context.read<AppWebviewCubit>().updateLoadingPercentage(
-          //         progress.toDouble(),
-          //       );
-          //     },
-          //     onTitleChanged: (controller, title) {
-          //       context.read<AppWebviewCubit>().updateTitle(title ?? '');
-          //     },
-          //     onLoadStop: (controller, url) async {
-          //       bool canGoBack = await _webViewController.canGoBack();
-          //       bool canGoForward = await _webViewController.canGoForward();
-
-          //       if (context.mounted) {
-          //         context.read<AppWebviewCubit>().updateCanGoBack(canGoBack);
-          //         context.read<AppWebviewCubit>().updateCanGoFoward(
-          //           canGoForward,
-          //         );
-          //       }
-          //     },
-          //     onLongPressHitTestResult: (controller, hitTestResult) async {
-          //       if (hitTestResult.type ==
-          //               InAppWebViewHitTestResultType.IMAGE_TYPE ||
-          //           hitTestResult.type ==
-          //               InAppWebViewHitTestResultType.SRC_IMAGE_ANCHOR_TYPE) {
-          //         String? imageUrl = hitTestResult.extra;
-          //         if (imageUrl != null) {
-          //           _showDownloadDialog(context, imageUrl);
-          //         }
-          //       }
-          //     },
-          //     onScrollChanged: (_, x, y) {
-          //       if (_isScrollingDown(y)) {
-          //         _isAppbarVisible.value = false;
-          //       } else {
-          //         _isAppbarVisible.value = true;
-          //       }
-          //     },
-          //   ),
-          //   builder: (context, isExtended, child) {
-          //     return AnimatedBuilder(
-          //       animation: _webpageTopPosition,
-          //       builder: (context, child) {
-          //         print('object @isExtended');
-          //         return child!;
-          //       },
-          //       child: child,
-          //     );
-          //   },
-          // ),
-
           // -------------------------------------------------------------
           // TOP APP BAR LAYER
           // -------------------------------------------------------------
-          ValueListenableBuilder(
-            valueListenable: _isAppbarVisible,
+          AnimatedBuilder(
+            animation: _appBarSlideAnimation,
+            builder: (context, child) {
+              return FractionalTranslation(
+                translation: Offset(0, _appBarSlideAnimation.value),
+                child: child,
+              );
+            },
             child: Container(
-              height: 60.h,
+              height: appBarHeight,
               width: 1.sw,
-              alignment: Alignment.center,
+              alignment: Alignment.bottomCenter,
               decoration: BoxDecoration(color: Theme.of(context).canvasColor),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Row(
                   children: [
-                    // 1. Selector for Back Button
                     BlocSelector<AppWebviewCubit, AppWebviewState, bool>(
                       selector: (state) => state.canGoBack,
                       builder: (context, canGoBack) {
-                        return AnimatedSwitcher(
-                          duration: _appbarAnimationDuration,
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(
+                        return Align(
+                          alignment: Alignment.center,
+                          child: AnimatedSwitcher(
+                            duration: _appbarAnimationDuration,
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
                                 opacity: animation,
                                 child: SizeTransition(
                                   sizeFactor: animation,
-                                  axis: Axis.horizontal,
                                   child: child,
                                 ),
-                              ),
-                          child: canGoBack
-                              ? IconButton(
-                                  key: const ValueKey('back_button'),
-                                  onPressed: () async {
-                                    if (await _webViewController.canGoBack()) {
-                                      _webViewController.goBack();
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_back_ios_new_outlined,
-                                    size: iconSize,
+                              );
+                            },
+                            child: canGoBack
+                                ? IconButton(
+                                    key: const ValueKey('back_button'),
+                                    onPressed: () async {
+                                      if (await _webViewController
+                                          .canGoBack()) {
+                                        _webViewController.goBack();
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_back_ios_new_outlined,
+                                      size: iconSize,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(
+                                    key: ValueKey('empty_back'),
                                   ),
-                                )
-                              : const SizedBox(
-                                  key: ValueKey('empty'),
-                                  width: 0,
-                                ),
+                          ),
                         );
                       },
                     ),
-
-                    // 2. Selector for Forward Button
                     BlocSelector<AppWebviewCubit, AppWebviewState, bool>(
                       selector: (state) => state.canGoForward,
                       builder: (context, canGoForward) {
-                        return AnimatedSwitcher(
-                          duration: _appbarAnimationDuration,
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(
+                        return Align(
+                          alignment: Alignment.center,
+                          child: AnimatedSwitcher(
+                            duration: _appbarAnimationDuration,
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
                                 opacity: animation,
                                 child: SizeTransition(
                                   sizeFactor: animation,
-                                  axis: Axis.horizontal,
                                   child: child,
                                 ),
-                              ),
-                          child: canGoForward
-                              ? IconButton(
-                                  key: const ValueKey('forward_button'),
-                                  onPressed: () async {
-                                    if (await _webViewController
-                                        .canGoForward()) {
-                                      _webViewController.goForward();
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: iconSize,
+                              );
+                            },
+                            child: canGoForward
+                                ? IconButton(
+                                    key: const ValueKey('forward_button'),
+                                    onPressed: () async {
+                                      if (await _webViewController
+                                          .canGoForward()) {
+                                        _webViewController.goForward();
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: iconSize,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(
+                                    key: ValueKey('empty_forward'),
                                   ),
-                                )
-                              : const SizedBox(
-                                  key: ValueKey('empty_forward'),
-                                  width: 0,
-                                ),
+                          ),
                         );
                       },
                     ),
-
                     SizedBox(width: 8.w),
-
-                    // 3. Selector for the Title
                     Expanded(
                       child:
                           BlocSelector<
@@ -286,44 +264,30 @@ class _AppWebviewViewState extends State<AppWebviewView>
                               final displayTitle = title.isEmpty
                                   ? StringResource.APP_TITLE
                                   : title;
-                              return AnimatedSize(
-                                duration: _appbarAnimationDuration,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 4.h,
-                                    horizontal: 12.w,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDarkMode
-                                        ? ColorResource.CANVAS_DARK_SECONDARY
-                                        : ColorResource.CANVAS_LIGHT_SECONDARY,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: AnimatedSwitcher(
-                                    duration: _appbarAnimationDuration,
-                                    transitionBuilder: (child, animation) =>
-                                        FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        ),
-                                    child: Text(
-                                      displayTitle,
-                                      key: ValueKey(displayTitle),
-                                      overflow: TextOverflow.clip,
-                                      maxLines: 1,
-                                      textAlign: TextAlign.center,
-                                      style: AppTextTheme.bodySmall(
-                                        context,
-                                      ).copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
+                              return Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 4.h,
+                                  horizontal: 12.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDarkMode
+                                      ? ColorResource.CANVAS_DARK_SECONDARY
+                                      : ColorResource.CANVAS_LIGHT_SECONDARY,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Text(
+                                  displayTitle,
+                                  overflow: TextOverflow.clip,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  style: AppTextTheme.bodySmall(
+                                    context,
+                                  ).copyWith(fontWeight: FontWeight.bold),
                                 ),
                               );
                             },
                           ),
                     ),
-
-                    // 4. Selector for Refresh / Close Action Button
                     BlocSelector<AppWebviewCubit, AppWebviewState, bool>(
                       selector: (state) => state.loadingPercentage != 100,
                       builder: (context, isLoading) {
@@ -337,8 +301,15 @@ class _AppWebviewViewState extends State<AppWebviewView>
                           },
                           icon: AnimatedSwitcher(
                             duration: _appbarAnimationDuration,
-                            transitionBuilder: (child, animation) =>
-                                ScaleTransition(scale: animation, child: child),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                              );
+                            },
                             child: FaIcon(
                               isLoading
                                   ? FontAwesomeIcons.xmark
@@ -350,8 +321,6 @@ class _AppWebviewViewState extends State<AppWebviewView>
                         );
                       },
                     ),
-
-                    // Home Button (Static)
                     IconButton(
                       onPressed: () async {
                         await _webViewController.clearHistory();
@@ -365,31 +334,12 @@ class _AppWebviewViewState extends State<AppWebviewView>
                 ),
               ),
             ),
-            builder: (context, isVisible, child) {
-              return AnimatedSlide(
-                offset: isVisible ? Offset.zero : Offset(0, -1),
-                duration: _appbarAnimationDuration,
-                child: child,
-                onEnd: () {
-                  if (isVisible) {
-                    _webpageTopPosition.value = appBarHeight;
-                    print('extend page');
-                  }
-
-                  if (!isVisible) {
-                    _webpageTopPosition.value = 0;
-                    print('shrink page');
-                  }
-                },
-              );
-            },
           ),
         ],
       ),
     );
   }
 
-  // Bottom sheet and download methods remain identical...
   void _showDownloadDialog(BuildContext context, String url) {
     showModalBottomSheet(
       context: context,
@@ -410,28 +360,6 @@ class _AppWebviewViewState extends State<AppWebviewView>
         ],
       ),
     );
-  }
-
-  // helper to hide appbar
-
-  bool _isScrollingDown(int currentY) {
-    // Check if the current scroll position is greater than the last recorded one
-    bool isDown = currentY > previousY;
-
-    // Update previousY to the current position for the next check
-    previousY = currentY;
-
-    return isDown;
-  }
-
-  bool _isScrollingUp(int currentY) {
-    // Check if the current scroll position is greater than the last recorded one
-    bool isDown = currentY < previousY;
-
-    // Update previousY to the current position for the next check
-    previousY = currentY;
-
-    return isDown;
   }
 
   Future<void> _downloadImage(String url) async {
