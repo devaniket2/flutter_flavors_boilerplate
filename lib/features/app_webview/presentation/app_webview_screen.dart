@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:flutter_flavors_boilerplate/app/common/themes/text_theme/app_text_theme.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_flavors_boilerplate/app/resources/string_resource.dart';
 import 'package:flutter_flavors_boilerplate/core/di/app_dependency_manager.dart';
 import 'package:flutter_flavors_boilerplate/features/app_webview/cubit/app_webview.state.dart';
 import 'package:flutter_flavors_boilerplate/features/app_webview/cubit/app_webview_cubit.dart';
+import 'package:flutter_flavors_boilerplate/features/app_webview/presentation/widgets/webview_app_bar.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,9 +18,12 @@ class AppWebviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AppDependencyManager.dependency<AppWebviewCubit>(),
-      child: const AppWebviewView(),
+    return MediaQuery.fromView(
+      view: View.of(context),
+      child: BlocProvider(
+        create: (_) => AppDependencyManager.dependency<AppWebviewCubit>(),
+        child: const AppWebviewView(),
+      ),
     );
   }
 }
@@ -30,9 +35,9 @@ class AppWebviewView extends StatefulWidget {
   State<AppWebviewView> createState() => _AppWebviewViewState();
 }
 
-class _AppWebviewViewState extends State<AppWebviewView>
-    with SingleTickerProviderStateMixin {
+class _AppWebviewViewState extends State<AppWebviewView> {
   final String _baseUri = "https://www.google.com/search?q=wuthering waves";
+  // https://in.pinterest.com/lonestarconfidential69/
 
   late InAppWebViewController _webViewController;
   final _appbarAnimationDuration = const Duration(milliseconds: 250);
@@ -40,132 +45,134 @@ class _AppWebviewViewState extends State<AppWebviewView>
   final double iconSize = 14.sp;
   late final double appBarHeight = 80.h;
 
-  int _lastValidY = 0;
-  late final AnimationController _appBarController;
-  late final Animation<double> _appBarSlideAnimation;
-  late final Animation<double> _webViewTranslateAnimation;
+  final ValueNotifier<bool> _isAppbarExtended = ValueNotifier(true);
+  final ValueNotifier<bool> _shouldExtendWebview = ValueNotifier(false);
+
+  int _previousY = 0;
 
   @override
   void initState() {
     super.initState();
-    _appBarController = AnimationController(
-      vsync: this,
-      duration: _appbarAnimationDuration,
-    )..value = 1.0; // Starts fully visible
-
-    _appBarSlideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _appBarController, curve: Curves.easeInOut),
-    );
-
-    _webViewTranslateAnimation = Tween<double>(begin: 0.0, end: appBarHeight)
-        .animate(
-          CurvedAnimation(parent: _appBarController, curve: Curves.easeInOut),
-        );
   }
 
   @override
   void dispose() {
-    _appBarController.dispose();
     super.dispose();
+    _isAppbarExtended.dispose();
+    _shouldExtendWebview.dispose();
+  }
+
+  void _changeWebviewPosition() async {
+    await Future.delayed(450.milliseconds);
+
+    if (_isAppbarExtended.value) {
+      _shouldExtendWebview.value = true;
+    } else {
+      _shouldExtendWebview.value = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        alignment: Alignment.topCenter,
         children: [
-          // -------------------------------------------------------------
           // WEBVIEW LAYER
-          // -------------------------------------------------------------
-          AnimatedBuilder(
-            animation: _webViewTranslateAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(0, _webViewTranslateAnimation.value),
-                child: child!,
+          ValueListenableBuilder(
+            valueListenable: _shouldExtendWebview,
+            builder: (context, value, child) {
+              return TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                  begin: View.of(context).padding.top,
+                  end: value ? appBarHeight : 0,
+                ),
+                duration: _appbarAnimationDuration,
+                curve: Curves.easeInOut,
+                builder: (context, pixelOffset, child) {
+                  return Transform.translate(
+                    // Animates smoothly by exact pixel offset
+                    offset: Offset(0, pixelOffset),
+                    child: child,
+                  );
+                },
+                child: InAppWebView(
+                  initialSettings: InAppWebViewSettings(
+                    algorithmicDarkeningAllowed: isDarkMode,
+                  ),
+                  initialUrlRequest: URLRequest(url: WebUri(_baseUri)),
+                  onWebViewCreated: (controller) {
+                    _webViewController = controller;
+                  },
+                  onProgressChanged: (controller, progress) {
+                    context.read<AppWebviewCubit>().updateLoadingPercentage(
+                      progress.toDouble(),
+                    );
+                  },
+                  onTitleChanged: (controller, title) {
+                    context.read<AppWebviewCubit>().updateTitle(title ?? '');
+                  },
+                  onLoadStop: (controller, url) async {
+                    bool canGoBack = await _webViewController.canGoBack();
+                    bool canGoForward = await _webViewController.canGoForward();
+
+                    if (context.mounted) {
+                      context.read<AppWebviewCubit>().updateCanGoBack(
+                        canGoBack,
+                      );
+                      context.read<AppWebviewCubit>().updateCanGoFoward(
+                        canGoForward,
+                      );
+                    }
+                  },
+                  onLongPressHitTestResult: (controller, hitTestResult) async {
+                    if (hitTestResult.type ==
+                            InAppWebViewHitTestResultType.IMAGE_TYPE ||
+                        hitTestResult.type ==
+                            InAppWebViewHitTestResultType
+                                .SRC_IMAGE_ANCHOR_TYPE) {
+                      String? imageUrl = hitTestResult.extra;
+                      if (imageUrl != null) {
+                        _showDownloadDialog(context, imageUrl);
+                      }
+                    }
+                  },
+                  onScrollChanged: (_, x, y) {
+                    if (_isScrollingDown(y)) {
+                      _isAppbarExtended.value = false;
+                      _changeWebviewPosition();
+                    } else {
+                      _isAppbarExtended.value = true;
+                      _changeWebviewPosition();
+                    }
+                  },
+                ),
               );
             },
-            child: InAppWebView(
-              initialSettings: InAppWebViewSettings(
-                algorithmicDarkeningAllowed: isDarkMode,
-              ),
-              initialUrlRequest: URLRequest(url: WebUri(_baseUri)),
-              onWebViewCreated: (controller) {
-                _webViewController = controller;
-              },
-              onProgressChanged: (controller, progress) {
-                context.read<AppWebviewCubit>().updateLoadingPercentage(
-                  progress.toDouble(),
-                );
-              },
-              onTitleChanged: (controller, title) {
-                context.read<AppWebviewCubit>().updateTitle(title ?? '');
-              },
-              onLoadStop: (controller, url) async {
-                bool canGoBack = await _webViewController.canGoBack();
-                bool canGoForward = await _webViewController.canGoForward();
-
-                if (context.mounted) {
-                  context.read<AppWebviewCubit>().updateCanGoBack(canGoBack);
-                  context.read<AppWebviewCubit>().updateCanGoFoward(
-                    canGoForward,
-                  );
-                }
-              },
-              onLongPressHitTestResult: (controller, hitTestResult) async {
-                if (hitTestResult.type ==
-                        InAppWebViewHitTestResultType.IMAGE_TYPE ||
-                    hitTestResult.type ==
-                        InAppWebViewHitTestResultType.SRC_IMAGE_ANCHOR_TYPE) {
-                  String? imageUrl = hitTestResult.extra;
-                  if (imageUrl != null) {
-                    _showDownloadDialog(context, imageUrl);
-                  }
-                }
-              },
-              onScrollChanged: (_, x, y) {
-                // 1. Force fully visible at the top edge
-                if (y <= 15) {
-                  if (!_appBarController.isCompleted) {
-                    _appBarController.forward();
-                  }
-                  _lastValidY = y;
-                  return;
-                }
-
-                // 2. Ignore minor micro-movements (require 12px change to trigger)
-                final delta = y - _lastValidY;
-                if (delta.abs() < 12) return;
-
-                // 3. Prevent reversing mid-animation (stops jittering/jumping)
-                if (_appBarController.isAnimating) return;
-
-                _lastValidY = y;
-
-                // 4. Trigger direction change safely
-                if (delta > 0) {
-                  if (_appBarController.isCompleted) {
-                    _appBarController.reverse();
-                  }
-                } else {
-                  if (_appBarController.isDismissed) {
-                    _appBarController.forward();
-                  }
-                }
-              },
-            ),
           ),
+
+          // appbar
+          // ValueListenableBuilder(
+          //   valueListenable: _isAppbarExtended,
+          //   child: WebviewAppBar(height: appBarHeight),
+          //   builder: (context, isExtended, child) {
+          //     return AnimatedSlide(
+          //       offset: isExtended ? Offset.zero : Offset(0, -1),
+          //       duration: _appbarAnimationDuration,
+          //       child: child!,
+          //     );
+          //   },
+          // ),
 
           // -------------------------------------------------------------
           // TOP APP BAR LAYER
           // -------------------------------------------------------------
-          AnimatedBuilder(
-            animation: _appBarSlideAnimation,
-            builder: (context, child) {
-              return FractionalTranslation(
-                translation: Offset(0, _appBarSlideAnimation.value),
-                child: child,
+          ValueListenableBuilder(
+            valueListenable: _isAppbarExtended,
+            builder: (context, isExtended, child) {
+              return AnimatedSlide(
+                offset: isExtended ? Offset.zero : Offset(0, -1),
+                duration: _appbarAnimationDuration,
+                child: child!,
               );
             },
             child: Container(
@@ -176,6 +183,7 @@ class _AppWebviewViewState extends State<AppWebviewView>
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     BlocSelector<AppWebviewCubit, AppWebviewState, bool>(
                       selector: (state) => state.canGoBack,
@@ -338,6 +346,12 @@ class _AppWebviewViewState extends State<AppWebviewView>
         ],
       ),
     );
+  }
+
+  bool _isScrollingDown(int currentY) {
+    final isDown = currentY > _previousY;
+    _previousY = currentY;
+    return isDown;
   }
 
   void _showDownloadDialog(BuildContext context, String url) {

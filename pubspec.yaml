@@ -53,7 +53,7 @@ dependencies:
   # path provider for internal file system
   path_provider: ^2.1.6
   # flutter in app webview
-  flutter_inappwebview: 6.2.0-beta.3
+  flutter_inappwebview: ^6.1.5
 
 dev_dependencies:
   flutter_test:
