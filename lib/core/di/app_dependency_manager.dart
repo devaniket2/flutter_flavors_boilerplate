@@ -1,69 +1,63 @@
-import 'package:flutter_flavors_boilerplate/app/common/themes/theme_manager.dart';
+import 'package:flutter_flavors_boilerplate/features/app_webview/cubit/app_webview_cubit.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/data/repositories/mock_auth_repository.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/dashboard/cubit/dashboard_cubit.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/login/cubit/login_cubit.dart';
+import 'package:flutter_flavors_boilerplate/features/auth/presentation/screens/splash/cubit/splash_cubit.dart';
+import 'package:get_it/get_it.dart';
 import 'package:flutter_flavors_boilerplate/core/config/app_config.dart';
 import 'package:flutter_flavors_boilerplate/core/network/api_service.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/dashboard/dashboard_state.getx.dart';
-import 'package:flutter_flavors_boilerplate/ui/screens/splash/splash_state.getx.dart';
-import 'package:flutter_flavors_boilerplate/ui/views/webview/app_webview_state.getx.dart';
-import 'package:get/get.dart';
 
-/// A class that provides all registered view controllers and services
-/// to use through dependency injection
-///
-/// In order to register controllers and services
-/// use `setup()` async method which takes a `BuildType`
-/// parameter
-///
-/// All view controllers and services must be decalred in `setup()` before accessing
 sealed class AppDependencyManager {
-  /// Registers `ViewControllers` and `Services` to use all over the
-  /// app
-  ///
-  /// All view controllers and services must be decalred here before accessing
-  static Future<void> setup(BuildType type) async {
-    // theme manager
-    Get.put(ThemeManager());
-    // App Config service
-    await Get.putAsync(() async => await AppConfig().init(type));
-    // api service
-    Get.put(ApiService());
+  static final GetIt locator = GetIt.instance;
 
-    // screen state controllers
-    Get.put(SplashStateController());
-    Get.put(DashboardStateController());
+  static Future<void> setup(AppBuildEnv type) async {
+    // 1. App Config service (Async registration)
+    final config = await AppConfig().init(type);
 
-    // view state controllers
-    Get.lazyPut(() => AppWebviewStateController());
+    // register config as singleton
+    locator.registerSingleton<AppConfig>(config);
+
+    // 2. Api service
+    locator.registerSingleton<ApiService>(ApiService());
+
+    /////////////// repos by layer
+
+    // authentication layer
+    locator.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(locator<ApiService>()),
+    );
+    locator.registerLazySingleton<AuthLocalDataSource>(
+      () => AuthLocalDataSourceImpl(),
+    );
+    // locator.registerLazySingleton<AuthRepository>(
+    //   () => AuthRepositoryImpl(
+    //     remoteDataSource: locator<AuthRemoteDataSource>(),
+    //     localDataSource: locator<AuthLocalDataSource>(),
+    //   ),
+    // );
+    locator.registerLazySingleton<AuthRepository>(
+      () => MockAuthRepository(localDataSource: locator<AuthLocalDataSource>()),
+    );
+
+    /////////////// cubits - must use registerFactory
+    locator.registerFactory<SplashCubit>(
+      () => SplashCubit(locator<AuthRepository>()),
+    );
+    locator.registerFactory<LoginCubit>(
+      () => LoginCubit(locator<AuthRepository>()),
+    );
+    locator.registerFactory<DashboardCubit>(
+      () => DashboardCubit(locator<AuthRepository>()),
+    );
+    locator.registerFactory<AppWebviewCubit>(() => AppWebviewCubit());
   }
 
-  /// Returns: `Type` view cntroller from `Widget Tree`
-  ///
-  /// `NOTE`: controller type `Type` has to be a child of `GetxController`
-  ///
-  /// Acts as a centralised storage access point for all `ViewControllers`
-  ///
-  /// Provides already registered `ViewControllers` to use in
-  /// components.
-  static T getController<T extends GetxController>() => Get.find<T>();
+  static T dependency<T extends Object>() => locator<T>();
 
-  /// Returns: `Type` Service from `Widget Tree`
-  ///
-  /// `NOTE`: Service type `Type` has to be a child of `GetxService`
-  ///
-  /// Acts as a centralised storage access point for all `Services`
-  ///
-  /// Provides already registered `Services` to use in
-  /// components.
-  static T getService<T extends GetxService>() => Get.find<T>();
-
-  /// Returns: `Type Class` Service from `Widget Tree`
-  ///
-  /// Provides already registered `Classes` to use in
-  /// components.
-  static T get<T>() => Get.find<T>();
-
-  /// A special getter which provides the instance of `AppConfig`
-  static AppConfig get appConfig => getService<AppConfig>();
-
-  /// Expose ApiService implementation
-  static ApiService get apiService => Get.find();
+  // Handy getters to easily fetch services across your data layer
+  static AppConfig get appConfig => locator<AppConfig>();
+  static ApiService get apiService => locator<ApiService>();
 }

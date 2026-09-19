@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavors_boilerplate/app/app.dart';
@@ -21,7 +22,7 @@ Future<void> _initAppServices() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // initiallize QA environment for app
-  await AppDependencyManager.setup(BuildType.production);
+  await AppDependencyManager.setup(AppBuildEnv.production);
 
   // detect network state changes
   StreamSubscription<List<ConnectivityResult>> networkActivityObserver =
@@ -36,3 +37,5 @@ Future<void> _initAppServices() async {
     ),
   );
 }
+
+class BuildType {}
